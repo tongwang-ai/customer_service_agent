@@ -2,7 +2,7 @@ import streamlit as st
 import openai
 
 # Configure your OpenAI API key or another LLM backend
-openai.api_key = my_key # Replace with your OpenAI key or connect to another LLM provider
+openai.api_key = st.secrets["OPENAI_API_KEY"]
 
 # Configure Streamlit app layout
 st.set_page_config(page_title="LLM Chat Interface", layout="centered")
