@@ -124,8 +124,12 @@ if st.button("Submit Feedback", on_click=reset_feedback):
     connection = create_connection()
     cursor = connection.cursor()
     
-    # Serialize chat history for storage
-    conversation = json.dumps(st.session_state["chat_history"])
+    # Filter chat history to exclude the system message
+    filtered_conversation = [
+        message for message in st.session_state["chat_history"] if message["role"] != "system"
+    ]
+    # Serialize the filtered conversation for storage
+    conversation = json.dumps(filtered_conversation)
     
     # Insert feedback into the database
     cursor.execute("""
