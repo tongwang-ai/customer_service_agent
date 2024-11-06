@@ -15,7 +15,6 @@ def create_connection():
         sslmode="require"
     )
 
-
 # Configure your OpenAI API key or another LLM backend
 openai.api_key = st.secrets["OPENAI_API_KEY"]
 
@@ -80,12 +79,14 @@ def send_message():
 
 # Callback function to reset feedback-related session states
 def reset_feedback():
-    st.session_state["overall_rating"] = 0
-    st.session_state["comments"] = ""
-    st.session_state["chat_history"] = [
-        {"role": "system", "content": agent_sys_txt},
-        {"role": "assistant", "content": "Hello, how can I help you?"}  # Reset chat history after feedback
-    ]
+    st.session_state.update({
+        "chat_history": [
+            {"role": "system", "content": agent_sys_txt},
+            {"role": "assistant", "content": "Hello, how can I help you?"}
+        ],
+        "overall_rating": 0,
+        "comments": ""
+    })
 
 # Display chat history in a conversation-like format
 for message in st.session_state["chat_history"]:
@@ -99,11 +100,7 @@ st.text_input("", key="user_input", on_change=send_message)
 
 # Clear chat history button
 if st.button("Clear Chat"):
-    # Reset chat history to initial system message and greeting
-    st.session_state["chat_history"] = [
-        {"role": "system", "content": agent_sys_txt},
-        {"role": "assistant", "content": "Hello, how can I help you?"}  # Initial greeting after clearing
-    ]
+    reset_feedback()
 
 # Overall rating section
 st.subheader("Rate the Agent")
@@ -144,5 +141,4 @@ if st.button("Submit Feedback"):
     
     st.success("Thank you for your feedback!")
     
-    # Now reset feedback-related session states after submission
-    reset_feedback()
+    # Now reset feedback-related ses
