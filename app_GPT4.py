@@ -7,12 +7,14 @@ import json
 # Database connection setup
 def create_connection():
     return psycopg2.connect(
-        dbname="gpt-4o-mini-pilot",
-        user="tw",
-        password="ikd",
-        host="localhost",  # or your database server address
-        port="5432"        # default PostgreSQL port
+        dbname=st.secrets["database"]["DB_NAME"],
+        user=st.secrets["database"]["DB_USER"],
+        password=st.secrets["database"]["DB_PASSWORD"],
+        host=st.secrets["database"]["DB_HOST"],
+        port=st.secrets["database"]["DB_PORT"],
+        sslmode="require"
     )
+
 
 # Configure your OpenAI API key or another LLM backend
 openai.api_key = st.secrets["OPENAI_API_KEY"]
