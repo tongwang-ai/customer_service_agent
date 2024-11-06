@@ -129,7 +129,7 @@ if st.button("Submit Feedback", on_click=reset_feedback):
     
     # Insert feedback into the database
     cursor.execute("""
-        INSERT INTO user_feedback (user_id, conversation[1:], rating, comments)
+        INSERT INTO user_feedback (user_id, conversation, rating, comments)
         VALUES (%s, %s, %s, %s)
     """, (st.session_state.get("user_id", "anonymous"), conversation, st.session_state["overall_rating"], st.session_state["comments"]))
     
