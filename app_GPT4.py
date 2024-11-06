@@ -3,6 +3,7 @@ import openai
 import my_prompts
 import psycopg2
 import json
+from datetime import datetime
 
 # Database connection setup
 def create_connection():
@@ -42,14 +43,12 @@ if "comments" not in st.session_state:
 # Function to get a response from the LLM using the latest OpenAI syntax
 def get_llm_response(messages, model="gpt-4o-mini", temperature=0.3, max_tokens=150):
     try:
-        # Use OpenAI's chat completion with correct parameters
         response = openai.chat.completions.create(
             model=model,
             messages=messages,
             max_tokens=max_tokens,
             temperature=temperature,
         )
-        # Access the content of the LLM response correctly
         return response.choices[0].message.content
     except Exception as e:
         return f"Error: {str(e)}"
@@ -58,23 +57,17 @@ def get_llm_response(messages, model="gpt-4o-mini", temperature=0.3, max_tokens=
 def send_message():
     user_message = st.session_state.user_input
     if user_message:
-        # Add user's message to chat history
         st.session_state["chat_history"].append({"role": "user", "content": user_message})
 
-        # Show typing indicator
         typing_placeholder = st.empty()
         typing_placeholder.markdown("**Agent typing...**")
 
-        # Get LLM response based on conversation history
         llm_response = get_llm_response(st.session_state["chat_history"])
 
-        # Clear typing indicator
         typing_placeholder.empty()
 
-        # Add LLM response to chat history
         st.session_state["chat_history"].append({"role": "assistant", "content": llm_response})
 
-        # Clear user input field after sending
         st.session_state["user_input"] = ""
 
 # Callback function to reset feedback-related session states
@@ -95,10 +88,8 @@ for message in st.session_state["chat_history"]:
     elif message["role"] == "assistant":
         st.markdown(f"**Agent:** {message['content']}")
 
-# Text input field with `on_change` to send message on "Enter"
 st.text_input("", key="user_input", on_change=send_message)
 
-# Clear chat history button
 if st.button("Clear Chat"):
     reset_feedback()
 
@@ -117,7 +108,6 @@ st.text_area("Your comments:", value=st.session_state["comments"], key="comments
 
 # Button to submit rating and comments
 if st.button("Submit Feedback"):
-    # Connect to the database
     connection = create_connection()
     cursor = connection.cursor()
     
@@ -125,20 +115,21 @@ if st.button("Submit Feedback"):
     filtered_conversation = [
         message for message in st.session_state["chat_history"] if message["role"] != "system"
     ]
-    # Serialize the filtered conversation for storage
     conversation = json.dumps(filtered_conversation)
     
-    # Insert feedback into the database
-    cursor.execute("""
-        INSERT INTO user_feedback (user_id, conversation, rating, comments)
-        VALUES (%s, %s, %s, %s)
-    """, (st.session_state.get("user_id", "anonymous"), conversation, st.session_state["overall_rating"], st.session_state["comments"]))
+    # Get current timestamp
+    feedback_time = datetime.now()
     
-    # Commit the changes and close the connection
+    # Insert feedback with timestamp into the database
+    cursor.execute("""
+        INSERT INTO user_feedback (user_id, conversation, rating, comments, feedback_time)
+        VALUES (%s, %s, %s, %s, %s)
+    """, (st.session_state.get("user_id", "anonymous"), conversation, st.session_state["overall_rating"], st.session_state["comments"], feedback_time))
+    
     connection.commit()
     cursor.close()
     connection.close()
     
     st.success("Thank you for your feedback!")
     
-    # Now reset feedback-related ses
+    reset_feedback()
