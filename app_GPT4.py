@@ -23,7 +23,7 @@ openai.api_key = st.secrets["OPENAI_API_KEY"]
 st.set_page_config(page_title="LLM Chat Interface", layout="centered")
 
 st.title("Live Chat with a Customer Service Agent")
-st.write("Chat with an agent")
+st.write("Chat with an agent to request a full refund of a restricted ticket you purchased")
 
 # Initialize session state for chat history
 agent_sys_txt = my_prompts.AGENT_PROMPT_TICKET + my_prompts.AIRLINE_POLICY_TICKET
@@ -41,7 +41,7 @@ if "comments" not in st.session_state:
     st.session_state["comments"] = ""
 
 # Function to get a response from the LLM using the latest OpenAI syntax
-def get_llm_response(messages, model="gpt-4o-mini", temperature=0.3, max_tokens=150):
+def get_llm_response(messages, model="gpt-4o-mini", temperature=0.3, max_tokens=500):
     try:
         response = openai.chat.completions.create(
             model=model,
@@ -70,17 +70,6 @@ def send_message():
 
         st.session_state["user_input"] = ""
 
-# Callback function to reset feedback-related session states
-def reset_feedback():
-    st.session_state.update({
-        "chat_history": [
-            {"role": "system", "content": agent_sys_txt},
-            {"role": "assistant", "content": "Hello, how can I help you?"}
-        ],
-        "overall_rating": 0,
-        "comments": ""
-    })
-
 # Display chat history in a conversation-like format
 for message in st.session_state["chat_history"]:
     if message["role"] == "user":
@@ -90,8 +79,12 @@ for message in st.session_state["chat_history"]:
 
 st.text_input("", key="user_input", on_change=send_message)
 
-if st.button("Clear Chat"):
-    reset_feedback()
+# if st.button("Clear Chat"):
+#     # Reset chat history without a function
+#     st.session_state["chat_history"] = [
+#         {"role": "system", "content": agent_sys_txt},
+#         {"role": "assistant", "content": "Hello, how can I help you?"}  # Initial greeting after clearing
+#     ]
 
 # Overall rating section
 st.subheader("Rate the Agent")
@@ -99,12 +92,13 @@ st.slider(
     "How satisfied are you with this agent? 1 means very dissatisfied and 5 means very satisfied:",
     min_value=1,
     max_value=5,
-    key="overall_rating"
+    key="overall_rating",
+    value=1  # Default rating value
 )
 
 # Comments section
 st.subheader("Comments about the Agent")
-st.text_area("Your comments:", value=st.session_state["comments"], key="comments")
+st.text_area("Your comments:", key="comments", value="")  # Default empty text
 
 # Button to submit rating and comments
 if st.button("Submit Feedback"):
@@ -131,5 +125,4 @@ if st.button("Submit Feedback"):
     connection.close()
     
     st.success("Thank you for your feedback!")
-    
-    reset_feedback()
+
