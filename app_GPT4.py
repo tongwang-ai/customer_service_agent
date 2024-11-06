@@ -118,8 +118,8 @@ st.slider(
 st.subheader("Comments about the Agent")
 st.text_area("Your comments:", value=st.session_state["comments"], key="comments")
 
-# Button to submit rating and comments with a callback
-if st.button("Submit Feedback", on_click=reset_feedback):
+# Button to submit rating and comments
+if st.button("Submit Feedback"):
     # Connect to the database
     connection = create_connection()
     cursor = connection.cursor()
@@ -143,3 +143,6 @@ if st.button("Submit Feedback", on_click=reset_feedback):
     connection.close()
     
     st.success("Thank you for your feedback!")
+    
+    # Now reset feedback-related session states after submission
+    reset_feedback()
