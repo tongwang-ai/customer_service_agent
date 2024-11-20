@@ -8,17 +8,8 @@ import random
 from datetime import datetime
 import argparse
 
-# Initialize the argument parser
-parser = argparse.ArgumentParser(description="Run the app with a specified LLM model.")
-
-# Add an argument for the model name
-parser.add_argument("model", type=str, help="The name of the LLM model to use (e.g., gpt-4)")
-
-# Parse the arguments
-args = parser.parse_args()
-
 # Access the model argument
-student_model = args.model
+student_model = "meta/llama-2-7b-chat"
 
 
 # Database connection setup
