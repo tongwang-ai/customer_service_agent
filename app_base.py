@@ -45,10 +45,10 @@ if "user_input_agent_1" not in st.session_state:
     st.session_state["user_input_agent_1"] = ""
 if "user_input_agent_2" not in st.session_state:
     st.session_state["user_input_agent_2"] = ""
-    
+
 # Reset function to clear session states
 def reset_form():
-    # Reset chat histories
+    # Reset session state keys not tied to widgets
     st.session_state["chat_history_agent_1"] = [
         {"role": "system", "content": agent_1_sys_txt},
         {"role": "assistant", "content": "Hello, this is Agent 1. How can I help you today?"}
@@ -58,12 +58,7 @@ def reset_form():
         {"role": "assistant", "content": "Hello, this is Agent 2. How can I assist you?"}
     ]
 
-    # Explicitly reset ratings and comments
-    st.session_state["rating_agent_1"] = 0
-    st.session_state["rating_agent_2"] = 0
-    st.session_state["comments"] = ""
-    st.session_state["user_input_agent_1"] = ""
-    st.session_state["user_input_agent_2"] = ""
+
 
 
 
@@ -140,13 +135,14 @@ with col1:
             st.markdown(f"**Agent 1:** {message['content']}")
     
     # Input field for Agent 1
-    st.text_input("Enter your message to Agent 1", key="user_input_agent_1", on_change=lambda: send_message("agent_1"))
+    st.text_input("Enter your message to Agent 1", key="user_input_agent_1", value="", on_change=lambda: send_message("agent_1"))
     
     # Rating for Agent 1
     st.slider(
         "Rate Agent 1",
         min_value=1,
         max_value=5,
+        value = 0,
         key="rating_agent_1"
     )
 with spacer:
@@ -161,13 +157,14 @@ with col2:
             st.markdown(f"**Agent 2:** {message['content']}")
     
     # Input field for Agent 2
-    st.text_input("Enter your message to Agent 2", key="user_input_agent_2", on_change=lambda: send_message("agent_2"))
+    st.text_input("Enter your message to Agent 2", key="user_input_agent_2", value="", on_change=lambda: send_message("agent_2"))
     
     # Rating for Agent 2
     st.slider(
         "Rate Agent 2",
         min_value=1,
         max_value=5,
+        value = 0,
         key="rating_agent_2"
     )
 
@@ -227,6 +224,5 @@ if st.button("Submit Feedback"):
     st.success("Thank you for your feedback!")
 
     # Call the reset function after successful submission
-    st.write("Session state before reset:", st.session_state)
     reset_form()
 
