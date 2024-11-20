@@ -70,12 +70,18 @@ st.markdown(
         border-radius: 10px; 
         margin-bottom: 20px;">
         <p style="font-size: 16px; color: #333;">
-        <b>Interact with Agent 1 and Agent 2 to request a full refund for a restricted ticket (confirmation number is YAL165). Try your best to negotiate with the agent, just like how you would do in a real scenario. </b><br><br><b>Note that it takes a few seconds for the agent to type. Do not refresh the page when waiting for a response.</b>
+        <b>Your task is to interact with Agent 1 and Agent 2 to request a full refund for a restricted ticket with confirmation number YAL165.</b><br><br>
+        <b>Objective:</b> Negotiate for a refund as you would in a real-life situation.<br><br>
+        <b>Guidelines:</b><br>
+        - Use persuasive and realistic arguments to achieve your goal.<br>
+        - If the conversation requires details not included in the instruction, use your best judgment to provide reasonable and realistic information.<br><br>
+        <b>Note:</b> It takes a few seconds for the agent to respond. Do not refresh the page while waiting for a response.
         </p>
     </div>
     """, 
     unsafe_allow_html=True
 )
+
 # Initialize session state for chat histories of both agents
 agent_1_sys_txt = my_prompts.AGENT_PROMPT_TICKET + my_prompts.AIRLINE_POLICY_TICKET
 agent_2_sys_txt = my_prompts.AGENT_PROMPT_TICKET + my_prompts.AIRLINE_POLICY_TICKET
