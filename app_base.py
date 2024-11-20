@@ -32,6 +32,25 @@ def create_connection():
         sslmode="require"
     )
 
+# Reset function to clear session states
+def reset_form():
+    # Reset chat histories
+    st.session_state["chat_history_agent_1"] = [
+        {"role": "system", "content": agent_1_sys_txt},
+        {"role": "assistant", "content": "Hello, this is Agent 1. How can I help you today?"}
+    ]
+    st.session_state["chat_history_agent_2"] = [
+        {"role": "system", "content": agent_2_sys_txt},
+        {"role": "assistant", "content": "Hello, this is Agent 2. How can I assist you?"}
+    ]
+    
+    # Reset ratings and comments
+    st.session_state["rating_agent_1"] = 0
+    st.session_state["rating_agent_2"] = 0
+    st.session_state["comments"] = ""
+    st.session_state["user_input_agent_1"] = ""
+    st.session_state["user_input_agent_2"] = ""
+
 # Configure OpenAI API key
 openai.api_key = st.secrets["OPENAI_API_KEY"]
 
@@ -205,6 +224,5 @@ if st.button("Submit Feedback"):
     
     st.success("Thank you for your feedback!")
 
-    # # Reset chat histories after submission
-    # st.session_state["chat_history_agent_1"] = [
-    #     {"role": "system", "content": agent
+    # Call the reset function after successful submission
+    reset_form()
