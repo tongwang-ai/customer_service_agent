@@ -197,22 +197,22 @@ if st.button("Submit Feedback"):
     # Insert feedback with function mapping info, agent selection, and ratings into the database
     cursor.execute("""
         INSERT INTO human_evals (
-            user_id, conversation_agent_1, conversation_agent_2,
-            rating_agent_1, rating_agent_2, comments,
-            survey_time, better_agent,
-            agent_1, agent_2, model_type
+            user_id, survey_time, agent_1, agent_2,
+            conversation_agent_1, conversation_agent_2,
+            rating_agent_1, rating_agent_2, better_agent,
+            comments, model_type
         ) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
     """, (
         st.session_state.get("user_id", "anonymous"),
+        survey_time,
+        st.session_state["agent_1"],
+        st.session_state["agent_2"],
         conversation_agent_1,
         conversation_agent_2,
         st.session_state["rating_agent_1"],
         st.session_state["rating_agent_2"],
-        st.session_state["comments"],
-        survey_time,
         better_agent,
-        st.session_state["agent_1"],
-        st.session_state["agent_2"],
+        st.session_state["comments"],
         "base_student_model"
     ))
     
