@@ -4,18 +4,58 @@ import tiktoken
 import operator
 import sentencepiece
 import re
+import openai
 import my_prompts
+import replicate
 
-def euclidean(v1, v2):
-   return sum((p - q) ** 2 for p, q in zip(v1, v2)) ** .5
+# Define two different LLM response functions
+def get_teacher_response(messages, model="gpt-4o-mini", temperature=0.3, max_tokens=500):
+    try:
+        response = openai.chat.completions.create(
+            model=model,
+            messages=messages,
+            max_tokens=max_tokens,
+            temperature=temperature,
+        )
+        return response.choices[0].message.content
+    except Exception as e:
+        return f"Error: {str(e)}"
 
-def cosine(v1,v2):
-   return spatial.distance.cosine(v1, v2)
+def get_student_response(messages, model="meta/llama-2-7b-chat", temperature=0.3, max_tokens=500):
+    if 'gpt' in model.lower():
+        try:
+            response = openai.chat.completions.create(
+                # model="gpt-4",
+                model=model,
+                # model="meta-llama/Llama-2-7b-chat-hf",
+                messages=messages,
+                temperature=0.3,
+                max_tokens=500,
+                top_p=1,
+                frequency_penalty=0,
+                presence_penalty=0,
+            )
+            return response.choices[0].message.content
+        except Exception as e:
+            return f"Error: {str(e)}"
 
-def split_batch(inp_list,no_of_batch):
-    batch_size = len(inp_list)//no_of_batch
-    return [inp_list[i*batch_size:(i+1)*batch_size] for i in range(no_of_batch)]
-
+    elif 'llama' in model.lower():
+        try:
+            prompt = convert_msg_to_prompt(messages)
+            output = replicate.run(
+                model,
+                input = {"prompt": prompt,
+                         "temperature": 0.3,
+                         "max_new_tokens": 500,
+                         "stop_sequences": "</s>"}
+            )
+            response1 = ''.join(output)
+            response2 = response1.split("[INST]")[0]
+            response2 = response2.replace("AGENT:", "")
+            response2 = response2.strip()
+            return response2
+        except Exception as e:
+            return f"Error: {str(e)}"
 
 def convert_conv_to_list(conv):
     res = []
@@ -31,31 +71,8 @@ def convert_conv_to_list(conv):
     res.append(curr_str)
     return res[1:]
 
-def process_guideline(guideline):
-    sents = guideline.split("\n")
-    res = ""
-    add = False
-    for sent in sents:
-        if add:
-            res += sent + "\n"
-        if sent.startswith("DO") and not sent.startswith("DON'T"):
-            res += sent + "\n"
-            add = True
-    return res
 
-def process_guideline1(guideline):
-    new_guideline = (guideline.replace("Agent 1","the agent").replace("agent 1","the agent")
-                     .replace("AGENT 1","the agent"))
-    new_guideline = (new_guideline.replace("Agent 2", "a good agent").replace("agent 2","the agent")
-                     .replace("AGENT 2", "a good agent"))
-    return new_guideline
 
-def process_guideline2(guideline):
-    para_list = guideline.split("\n")
-    res = ""
-    for para in para_list[:-1]:
-        res += para + "\n"
-    return res
 
 def num_tokens_from_string(string, encoding_name = "cl100k_base") -> int:
     encoding = tiktoken.get_encoding(encoding_name)
@@ -63,36 +80,7 @@ def num_tokens_from_string(string, encoding_name = "cl100k_base") -> int:
     return num_tokens
       
 
-def combine_k_guidelines(guidelines):
-    sys_txt = """You are provided with many DO lists and DON'T lists that a customer support agent from an airline company should follow. The 'DO List' outlines what you must follow, and the 'DONT List' details what you should avoid. Your task is to combine all the DO lists into one general DO list and all the DONT Lists into one general DONT List. The new lists should be more general. Try to summarize both the main information and the examples, and eliminate repetitive items. Call the new lists 'DO List' and 'DONT List' in the output."""
-    msg_list = [{"role": 'system', "content": sys_txt}]
-    total_token_no = num_tokens_from_string(sys_txt)
-     
-    user_msg = "\n\n".join(guidelines) 
-    #print("db user_msg: ",user_msg )
-    new_msg = {"role": 'user', "content": user_msg}
-    msg_list.append(new_msg)
-    total_token_no += num_tokens_from_string(user_msg)
-    res_max_token = 4050 - total_token_no
-    # print("max token allowed = ", res_max_token)
-    try:
-        response = client.chat.completions.create(
-            # model="ft:gpt-3.5-turbo-0613:yale-university::87p0vJIx",
-            model="gpt-3.5-turbo-0125",
-            # model="gpt-4",
-            messages=msg_list,
-            temperature=0.3,
-            max_tokens=res_max_token,
-            top_p=1,
-            frequency_penalty=0,
-            presence_penalty=0)
-        new_response = response.choices[0].message.content
-        #print("db new_response = ",new_response)
-        # new_response = process_guideline2(raw_response)
-    except Exception as e:
-        print("Exception occured: ", e)
-        new_response = guideline
-    return new_response
+
     
 def find_k_closest_embedding(in_embed,embed_list):
     dist_dict = {}
@@ -138,45 +126,6 @@ def llama2_count_tokens(prompt):
     return len(prompt_tokens)
 
 
-async def combine_k_guidelines(guidelines, client):
-    sys_txt = my_prompts.MERGE_GUIDELINES
-    msg_list = [{"role": 'system', "content": sys_txt}]
-    total_token_no = num_tokens_from_string(sys_txt)
-
-    user_msg = "\n\n".join(guidelines)
-    # print("db user_msg: ",user_msg )
-    new_msg = {"role": 'user', "content": user_msg}
-    msg_list.append(new_msg)
-    total_token_no += num_tokens_from_string(user_msg)
-    res_max_token = 4050 - total_token_no
-    # print("max token allowed = ", res_max_token)
-    try:
-        response = await client.chat.completions.create(
-            # model="ft:gpt-3.5-turbo-0613:yale-university::87p0vJIx",
-            model="gpt-3.5-turbo-0125",
-            # model="gpt-4",
-            messages=msg_list,
-            temperature=0.3,
-            max_tokens=res_max_token,
-            top_p=1,
-            frequency_penalty=0,
-            presence_penalty=0)
-        new_response = response.choices[0].message.content
-        # print("db new_response = ",new_response)
-        # new_response = process_guideline2(raw_response)
-    except Exception as e:
-        print("Exception occured: ", e)
-        new_response = "Guidelines for agent: "
-    return new_response
-
-
-# def find_k_closest_embedding(in_embed,embed_list):
-#     dist_dict = {}
-#     for i,e in enumerate(embed_list):
-#        dist_dict[i] = euclidean(in_embed,e)
-#     dist_dict_sort = sorted(dist_dict.items(), key=operator.itemgetter(1))
-#     closest_idx = dist_dict_sort[0][0]
-#     return closest_idx
 
 def find_ks_closest_embedding(in_embed, embed_list, k=5):
     dist_dict = {}
