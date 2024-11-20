@@ -23,6 +23,27 @@ def create_connection():
         sslmode="require"
     )
 
+if "rating_agent_1" not in st.session_state:
+    st.session_state["rating_agent_1"] = 0
+if "rating_agent_2" not in st.session_state:
+    st.session_state["rating_agent_2"] = 0
+if "comments" not in st.session_state:
+    st.session_state["comments"] = ""
+if "chat_history_agent_1" not in st.session_state:
+    st.session_state["chat_history_agent_1"] = [
+        {"role": "system", "content": agent_1_sys_txt},
+        {"role": "assistant", "content": "Hello, this is Agent 1. How can I help you today?"}
+    ]
+if "chat_history_agent_2" not in st.session_state:
+    st.session_state["chat_history_agent_2"] = [
+        {"role": "system", "content": agent_2_sys_txt},
+        {"role": "assistant", "content": "Hello, this is Agent 2. How can I assist you?"}
+    ]
+if "user_input_agent_1" not in st.session_state:
+    st.session_state["user_input_agent_1"] = ""
+if "user_input_agent_2" not in st.session_state:
+    st.session_state["user_input_agent_2"] = ""
+    
 # Reset function to clear session states
 def reset_form():
     # Reset chat histories
@@ -86,26 +107,7 @@ st.markdown(
 agent_1_sys_txt = my_prompts.AGENT_PROMPT_TICKET + my_prompts.AIRLINE_POLICY_TICKET
 agent_2_sys_txt = my_prompts.AGENT_PROMPT_TICKET + my_prompts.AIRLINE_POLICY_TICKET
 
-if "chat_history_agent_1" not in st.session_state:
-    st.session_state["chat_history_agent_1"] = [
-        {"role": "system", "content": agent_1_sys_txt},
-        {"role": "assistant", "content": "Hello, this is Agent 1. How can I help you today?"}
-    ]
 
-if "chat_history_agent_2" not in st.session_state:
-    st.session_state["chat_history_agent_2"] = [
-        {"role": "system", "content": agent_2_sys_txt},
-        {"role": "assistant", "content": "Hello, this is Agent 2. How can I assist you?"}
-    ]
-
-if "rating_agent_1" not in st.session_state:
-    st.session_state["rating_agent_1"] = 0
-
-if "rating_agent_2" not in st.session_state:
-    st.session_state["rating_agent_2"] = 0
-
-if "comments" not in st.session_state:
-    st.session_state["comments"] = ""
 
 # Function to handle sending messages for each agent
 def send_message(agent):
