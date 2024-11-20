@@ -11,7 +11,9 @@ import argparse
 # Access the model argument
 student_model = "meta/llama-2-7b-chat"
 
-
+# Initialize session state for chat histories of both agents
+agent_1_sys_txt = my_prompts.AGENT_PROMPT_TICKET + my_prompts.AIRLINE_POLICY_TICKET
+agent_2_sys_txt = my_prompts.AGENT_PROMPT_TICKET + my_prompts.AIRLINE_POLICY_TICKET
 # Database connection setup
 def create_connection():
     return psycopg2.connect(
@@ -103,9 +105,7 @@ st.markdown(
     unsafe_allow_html=True
 )
 
-# Initialize session state for chat histories of both agents
-agent_1_sys_txt = my_prompts.AGENT_PROMPT_TICKET + my_prompts.AIRLINE_POLICY_TICKET
-agent_2_sys_txt = my_prompts.AGENT_PROMPT_TICKET + my_prompts.AIRLINE_POLICY_TICKET
+
 
 
 
