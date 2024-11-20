@@ -58,12 +58,13 @@ def reset_form():
         {"role": "assistant", "content": "Hello, this is Agent 2. How can I assist you?"}
     ]
     
-    # Reset ratings and comments
-    st.session_state["rating_agent_1"] = 0
-    st.session_state["rating_agent_2"] = 0
-    st.session_state["comments"] = ""
-    st.session_state["user_input_agent_1"] = ""
-    st.session_state["user_input_agent_2"] = ""
+    # Reset ratings and comments (use .get() with fallback values)
+    st.session_state["rating_agent_1"] = st.session_state.get("rating_agent_1", 0)
+    st.session_state["rating_agent_2"] = st.session_state.get("rating_agent_2", 0)
+    st.session_state["comments"] = st.session_state.get("comments", "")
+    st.session_state["user_input_agent_1"] = st.session_state.get("user_input_agent_1", "")
+    st.session_state["user_input_agent_2"] = st.session_state.get("user_input_agent_2", "")
+
 
 # Configure OpenAI API key
 openai.api_key = st.secrets["OPENAI_API_KEY"]
