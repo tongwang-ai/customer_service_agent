@@ -52,8 +52,8 @@ if "agent_1_response_func" not in st.session_state:
     funcs = random.sample([get_teacher_response, get_student_response], 2)
     st.session_state["agent_1_response_func"] = funcs[0]
     st.session_state["agent_2_response_func"] = funcs[1]
-    st.session_state["agent_1_func_name"] = "get_teacher_response" if funcs[0] == get_teacher_response else "get_student_response"
-    st.session_state["agent_2_func_name"] = "get_teacher_response" if funcs[1] == get_teacher_response else "get_student_response"
+    # st.session_state["agent_1_func_name"] = "get_teacher_response" if funcs[0] == get_teacher_response else "get_student_response"
+    # st.session_state["agent_2_func_name"] = "get_teacher_response" if funcs[1] == get_teacher_response else "get_student_response"
     st.session_state['agent_1'] = "gpt-4" if funcs[0] == get_teacher_response else student_model
     st.session_state['agent_2'] = "gpt-4" if funcs[1] == get_teacher_response else student_model
 # Configure Streamlit app layout
@@ -192,16 +192,16 @@ if st.button("Submit Feedback"):
     conversation_agent_2 = json.dumps(filtered_conversation_agent_2)
     
     # Get current timestamp
-    feedback_time = datetime.now()
+    survey_time = datetime.now()
     
     # Insert feedback with function mapping info, agent selection, and ratings into the database
     cursor.execute("""
         INSERT INTO human_evals (
             user_id, conversation_agent_1, conversation_agent_2,
             rating_agent_1, rating_agent_2, comments,
-            feedback_time, better_agent,
-            agent_1_func_name, agent_2_func_name
-        ) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
+            survey_time, better_agent,
+            agent_1, agent_2, model_type
+        ) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
     """, (
         st.session_state.get("user_id", "anonymous"),
         conversation_agent_1,
@@ -209,10 +209,11 @@ if st.button("Submit Feedback"):
         st.session_state["rating_agent_1"],
         st.session_state["rating_agent_2"],
         st.session_state["comments"],
-        feedback_time,
+        survey_time,
         better_agent,
-        st.session_state["agent_1_func_name"],
-        st.session_state["agent_2_func_name"]
+        st.session_state["agent_1"],
+        st.session_state["agent_2"],
+        "base_student_model"
     ))
     
     connection.commit()
