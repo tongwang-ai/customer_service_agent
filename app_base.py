@@ -142,7 +142,6 @@ with col1:
         "Rate Agent 1 - 1 means very disatisfied and 5 means very satisfied",
         min_value=1,
         max_value=5,
-        value = 0,
         key="rating_agent_1"
     )
 with spacer:
@@ -164,7 +163,6 @@ with col2:
         "Rate Agent 2 - 1 means very disatisfied and 5 means very satisfied",
         min_value=1,
         max_value=5,
-        value = 0,
         key="rating_agent_2"
     )
 
@@ -176,7 +174,56 @@ st.text_area("Your comments:", key="comments", value="")
 better_agent = st.radio("Which agent do you think performed better?", ("Agent 1", "Agent 2"))
 
 # Button to submit feedback and choice of better agent
-if st.button("Submit Feedback"):
+# if st.button("Submit Feedback"):
+    # connection = create_connection()
+    # cursor = connection.cursor()
+    
+    # # Filter chat histories to exclude system messages
+    # filtered_conversation_agent_1 = [
+    #     message for message in st.session_state["chat_history_agent_1"] if message["role"] != "system"
+    # ]
+    # filtered_conversation_agent_2 = [
+    #     message for message in st.session_state["chat_history_agent_2"] if message["role"] != "system"
+    # ]
+    
+    # # Serialize conversations
+    # conversation_agent_1 = json.dumps(filtered_conversation_agent_1)
+    # conversation_agent_2 = json.dumps(filtered_conversation_agent_2)
+    
+    # # Get current timestamp
+    # survey_time = datetime.now()
+    
+    # # Insert feedback with function mapping info, agent selection, and ratings into the database
+    # cursor.execute("""
+    #     INSERT INTO IKD_human_evals (
+    #         user_id, survey_time, agent_1, agent_2,
+    #         conversation_agent_1, conversation_agent_2,
+    #         rating_agent_1, rating_agent_2, better_agent,
+    #         comments, model_type
+    #     ) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
+    # """, (
+    #     st.session_state.get("user_id", "anonymous"),
+    #     survey_time,
+    #     st.session_state["agent_1"],
+    #     st.session_state["agent_2"],
+    #     conversation_agent_1,
+    #     conversation_agent_2,
+    #     st.session_state["rating_agent_1"],
+    #     st.session_state["rating_agent_2"],
+    #     better_agent,
+    #     st.session_state["comments"],
+    #     "base_student_model"
+    # ))
+    
+    # connection.commit()
+    # cursor.close()
+    # connection.close()
+    
+
+if st.button("Submit Feedback", disabled=st.session_state.get("form_submitted", False)):
+    st.session_state["form_submitted"] = True  # Disable button after click
+    # Your existing feedback submission code here
+
     connection = create_connection()
     cursor = connection.cursor()
     
@@ -220,7 +267,10 @@ if st.button("Submit Feedback"):
     connection.commit()
     cursor.close()
     connection.close()
-    
+
+
+
+
     st.success("Thank you for your feedback!")
 
     # Call the reset function after successful submission
