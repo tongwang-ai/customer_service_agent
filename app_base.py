@@ -139,7 +139,7 @@ with col1:
     
     # Rating for Agent 1
     st.slider(
-        "Rate Agent 1",
+        "Rate Agent 1 - 1 means very disatisfied and 5 means very satisfied",
         min_value=1,
         max_value=5,
         value = 0,
@@ -161,7 +161,7 @@ with col2:
     
     # Rating for Agent 2
     st.slider(
-        "Rate Agent 2",
+        "Rate Agent 2 - 1 means very disatisfied and 5 means very satisfied",
         min_value=1,
         max_value=5,
         value = 0,
