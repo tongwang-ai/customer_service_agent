@@ -197,7 +197,7 @@ if st.button("Submit Feedback"):
     
     # Insert feedback with function mapping info, agent selection, and ratings into the database
     cursor.execute("""
-        INSERT INTO human_evals (
+        INSERT INTO IKD_human_evals (
             user_id, survey_time, agent_1, agent_2,
             conversation_agent_1, conversation_agent_2,
             rating_agent_1, rating_agent_2, better_agent,
