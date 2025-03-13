@@ -29,8 +29,10 @@ if "rating_agent_1" not in st.session_state:
     st.session_state["rating_agent_1"] = 0
 if "rating_agent_2" not in st.session_state:
     st.session_state["rating_agent_2"] = 0
-if "comments" not in st.session_state:
-    st.session_state["comments"] = ""
+if "comments_agent1" not in st.session_state:
+    st.session_state["comments_agent1"] = ""
+if "comments_agent2" not in st.session_state:
+    st.session_state["comments_agent2"] = ""
 if "chat_history_agent_1" not in st.session_state:
     st.session_state["chat_history_agent_1"] = [
         {"role": "system", "content": agent_1_sys_txt},
@@ -168,8 +170,11 @@ with col2:
     )
 
 # Comments section for both agents
-st.subheader("Comments about the Agents")
-st.text_area("Your comments:", key="comments", value="")
+st.subheader("Suggestions for Agent 1")
+st.text_area("Please provide feedback on how Agent 1 can improve:", key="comments_agent1", value="")
+
+st.subheader("Suggestions for Agent 2")
+st.text_area("Please provide feedback on how Agent 2 can improve:", key="comments_agent2", value="")
 
 # Select the better agent
 better_agent = st.radio("Which agent do you think performed better?", ("Agent 1", "Agent 2"))
@@ -249,7 +254,7 @@ if st.button("Submit Feedback", disabled=st.session_state.get("form_submitted", 
             user_id, survey_time, agent_1, agent_2,
             conversation_agent_1, conversation_agent_2,
             rating_agent_1, rating_agent_2, better_agent,
-            comments, model_type
+            comments_agent1, comments_agent2, model_type
         ) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
     """, (
         st.session_state.get("user_id", "anonymous"),
@@ -261,7 +266,8 @@ if st.button("Submit Feedback", disabled=st.session_state.get("form_submitted", 
         st.session_state["rating_agent_1"],
         st.session_state["rating_agent_2"],
         better_agent,
-        st.session_state["comments"],
+        st.session_state["comments_agent1"],
+        st.session_state["comments_agent2"],
         "base_student_model"
     ))
     
