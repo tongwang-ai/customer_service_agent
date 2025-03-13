@@ -90,7 +90,7 @@ st.markdown(
         border-radius: 10px; 
         margin-bottom: 20px;">
         <p style="font-size: 16px; color: #333;">
-        <b>Your task is to interact with Agent 1 and Agent 2 separately to request cancellation of a restricted ticket with a full refund. The confirmation number of the ticket is YAL165.</b><br><br>
+        <b>You booked a non-refundable and nonchangeable flight ticket 1 day ago. Now you call the agent to request to cancel it without penalty and request a full refund. You will interact with Agent 1 and Agent 2 separately and then rate them after interacting with them. The confirmation number of the ticket is YAL165.</b><br><br>
         <b>Objective:</b> Negotiate as you would in a real-life situation.<br><br>
         <b>Guidelines:</b><br>
         - Use persuasive and realistic arguments to achieve your goal.<br>
