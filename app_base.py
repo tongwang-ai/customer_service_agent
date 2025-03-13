@@ -90,7 +90,7 @@ st.markdown(
         border-radius: 10px; 
         margin-bottom: 20px;">
         <p style="font-size: 16px; color: #333;">
-        <b>You booked a non-refundable and nonchangeable flight ticket 1 day ago. Now you call the agent to request to cancel it without penalty and request a full refund. You will interact with Agent 1 and Agent 2 separately and then rate them after interacting with them. The confirmation number of the ticket is YAL165.</b><br><br>
+        <b>You purchased a non-refundable, non-changeable flight ticket (confirmation number: YAL165) one day ago. Now, you are contacting the airline to request a cancellation without penalty and a full refund. You will speak to Agent 1 and Agent 2 in separate conversations, and after each interaction, you will provide a rating of the agents based on your experience.</b><br><br>
         <b>Objective:</b> Negotiate as you would in a real-life situation.<br><br>
         <b>Guidelines:</b><br>
         - Use persuasive and realistic arguments to achieve your goal.<br>
