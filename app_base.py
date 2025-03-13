@@ -90,11 +90,12 @@ st.markdown(
         border-radius: 10px; 
         margin-bottom: 20px;">
         <p style="font-size: 16px; color: #333;">
-        <b>Your task is to interact with Agent 1 and Agent 2 to request a full refund for a restricted ticket with confirmation number YAL165.</b><br><br>
-        <b>Objective:</b> Negotiate for a refund as you would in a real-life situation.<br><br>
+        <b>Your task is to interact with Agent 1 and Agent 2 separately to request cancellation of a restricted ticket with a full refund. The confirmation number of the ticket is YAL165.</b><br><br>
+        <b>Objective:</b> Negotiate as you would in a real-life situation.<br><br>
         <b>Guidelines:</b><br>
         - Use persuasive and realistic arguments to achieve your goal.<br>
-        - If the conversation requires details not included in the instruction, use your best judgment to provide reasonable and realistic information.<br><br>
+        - If the conversation requires details not included in the instruction, use your best judgment to provide reasonable and realistic information.
+        - rate each agent at the end of the conversation.<br><br>
         <b>Note:</b> It takes a few seconds for the agent to respond. Do not refresh the page while waiting for a response.
         </p>
     </div>
