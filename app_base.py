@@ -92,7 +92,7 @@ st.markdown(
         border-radius: 10px; 
         margin-bottom: 20px;">
         <p style="font-size: 16px; color: #333;">
-        <b>In this study, you will role-play as an airline customer separately contacting two independent customer service agents. Each agent has no knowledge of your interaction or any information exchanged with the other. You recently purchased a non-refundable, non-changeable flight ticket (confirmation number: YAL165) one day ago. Your goal is to request the cancellation of this restricted ticket and attempt to obtain a full refund. After each interaction, please rate the agent’s performance and provide specific suggestions on how they can enhance their customer service skills.</b><br><br>
+        <b>In this study, you will role-play as an airline customer separately contacting two independent customer service agents. You recently purchased a non-refundable, non-changeable flight ticket (confirmation number: YAL165) one day ago. Your goal is to request the cancellation of this restricted ticket and attempt to obtain a full refund. Each agent has no knowledge of your interaction or any information exchanged with the other. After each interaction, please rate the agent’s performance and provide specific suggestions on how they can enhance their customer service skills.</b><br><br>
         <b>Objective:</b> Negotiate as you would in a real-life situation.<br><br>
         <b>Guidelines:</b><br>
         - Use persuasive and realistic arguments to achieve your goal.<br>
