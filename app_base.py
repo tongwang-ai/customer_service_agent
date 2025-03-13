@@ -196,7 +196,7 @@ better_agent = st.radio("Which agent do you think performed better?", ("Agent 1"
     
     # # Insert feedback with function mapping info, agent selection, and ratings into the database
     # cursor.execute("""
-    #     INSERT INTO IKD_human_evals (
+    #     INSERT INTO hum_2LLMagents_conv (
     #         user_id, survey_time, agent_1, agent_2,
     #         conversation_agent_1, conversation_agent_2,
     #         rating_agent_1, rating_agent_2, better_agent,
@@ -245,7 +245,7 @@ if st.button("Submit Feedback", disabled=st.session_state.get("form_submitted", 
     
     # Insert feedback with function mapping info, agent selection, and ratings into the database
     cursor.execute("""
-        INSERT INTO IKD_human_evals (
+        INSERT INTO hum_2LLMagents_conv (
             user_id, survey_time, agent_1, agent_2,
             conversation_agent_1, conversation_agent_2,
             rating_agent_1, rating_agent_2, better_agent,
