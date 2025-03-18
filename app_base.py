@@ -9,7 +9,7 @@ from datetime import datetime
 import argparse
 
 # Access the model argument
-student_model = "meta/llama-2-7b-chat"
+student_model = "meta/llama-2-13b-chat"
 
 # Initialize session state for chat histories of both agents
 agent_1_sys_txt = my_prompts.AGENT_PROMPT_TICKET + my_prompts.AIRLINE_POLICY_TICKET
