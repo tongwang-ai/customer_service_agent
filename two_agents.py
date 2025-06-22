@@ -230,7 +230,7 @@ if st.button("Submit Feedback", disabled=st.session_state.get("form_submitted", 
     conversation_agent_2 = json.dumps(filtered_conversation_agent_2)
     survey_time = datetime.now()
     cursor.execute("""
-        INSERT INTO IKD_human_evals (
+        INSERT INTO two_agents_human_in_the_loop_evals (
             user_id, survey_time, agent_1, agent_2,
             conversation_agent_1, conversation_agent_2,
             rating_agent_1, rating_agent_2, better_agent,
