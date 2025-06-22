@@ -174,6 +174,7 @@ with col1:
         "Rate Agent 1 - 1 means very dissatisfied and 5 means very satisfied",
         min_value=1,
         max_value=5,
+        value = 1,
         key="rating_agent_1"
     )
 
@@ -205,6 +206,7 @@ with col2:
         "Rate Agent 2 - 1 means very dissatisfied and 5 means very satisfied",
         min_value=1,
         max_value=5,
+        value = 1,
         key="rating_agent_2"
     )
 
