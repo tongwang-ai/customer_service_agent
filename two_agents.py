@@ -7,7 +7,6 @@ import json
 import random
 from openai import OpenAI
 from datetime import datetime
-import asyncio
 import pickle
 import os
 
