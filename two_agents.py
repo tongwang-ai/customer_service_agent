@@ -21,15 +21,15 @@ if "clear_input_agent_1" not in st.session_state:
     st.session_state["clear_input_agent_1"] = False
 
 
-# def create_connection():
-#     return psycopg2.connect(
-#         dbname=st.secrets["database"]["DB_NAME"],
-#         user=st.secrets["database"]["DB_USER"],
-#         password=st.secrets["database"]["DB_PASSWORD"],
-#         host=st.secrets["database"]["DB_HOST"],
-#         port=st.secrets["database"]["DB_PORT"],
-#         sslmode="require"
-#     )
+def create_connection():
+    return psycopg2.connect(
+        dbname=st.secrets["database"]["DB_NAME"],
+        user=st.secrets["database"]["DB_USER"],
+        password=st.secrets["database"]["DB_PASSWORD"],
+        host=st.secrets["database"]["DB_HOST"],
+        port=st.secrets["database"]["DB_PORT"],
+        sslmode="require"
+    )
 
 
 
