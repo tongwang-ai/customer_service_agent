@@ -3,7 +3,6 @@ from typing import List, Dict, Optional, Tuple
 import pandas as pd
 import tiktoken
 import operator
-import sentencepiece
 import re
 import openai
 import os
@@ -241,11 +240,6 @@ def get_embedding_sync(text, client, model="text-embedding-ada-002"):
     response = client.embeddings.create(input=[text], model=model)
     return response.data[0].embedding
 #%%
-
-def llama2_count_tokens(prompt):
-    sp = sentencepiece.SentencePieceProcessor(model_file='tokenizer.model')
-    prompt_tokens = sp.encode_as_ids(prompt)
-    return len(prompt_tokens)
 
 
 
