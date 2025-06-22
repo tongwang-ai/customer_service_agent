@@ -1,6 +1,2 @@
 streamlit
 openai
-psycopg2-binary
-tiktoken
-sentencepiece
-replicate
