@@ -9,7 +9,6 @@ from openai import OpenAI
 from datetime import datetime
 import pickle
 import os
-import streamlit as st
 
 student_model = "meta/llama-2-7b-chat"  # or whatever model string you want
 embedding_client = OpenAI(api_key=st.secrets["OPENAI_API_KEY"])
