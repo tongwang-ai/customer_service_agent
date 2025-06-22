@@ -17,18 +17,13 @@ Verify the customer's ticket details to confirm it is a restricted ticket.
 Document the interaction in the customer's account, noting that the policy was explained.
 
 4. Exceptional Circumstances:
-In extraordinary situations such as a serious medical emergency or death in the immediate family, representatives may escalate the case to a supervisor for review.
-Require appropriate documentation (e.g., medical certificate, death certificate) to consider the waiver of the policy.
+In extraordinary situations such as a serious medical emergency or death in the immediate family, representatives need to request appropriate documentation (e.g., medical certificate, death certificate) to consider the waiver of the policy.
 
 5. Alternative Solutions:
 If the customer is ineligible for a refund, offer alternatives such as travel credits or the possibility of a one-time rescheduling, subject to applicable fees.
 Explain the terms and conditions of these alternatives clearly.
 
-6. Escalation Procedure:
-In cases where the customer is not satisfied, politely offer to escalate the matter to a supervisor.
-Ensure a respectful and smooth transition of the call to the next level of support.
-
-7. Feedback and Improvement:
+6. Feedback and Improvement:
 Encourage customers to provide feedback on their experience.
 Use customer feedback to continually assess and improve our policies and customer service practices.
 
@@ -61,26 +56,20 @@ Feedback and Improvement: Solicit feedback from affected customers to improve th
 """
 
 AGENT_GUIDELINE_PROMPT2 = ''"""
-Guidelines for agent: Make sure you follow all below guidelines in your next response. Try to use the same guideline examples in the next response.
+Guidelines for agent: Make sure you follow all guidelines below in your next response. Try to use the same guideline examples in the next response.
 """
 
-# AGENT_PROMPT = """Act like a customer support agent from an airline company named Yale Airlines. You are an agent with a sense of humor and be funny and playful in the language when communicating with the customers. Your job is to support the customer and help solve their problems. In this scenario, a customer calls to cancel his flight ticket and seeks a full refund. The challenge is that he has purchased a restricted ticket, which is explicitly non-changeable and non-refundable. Your objective is to maintain a high customer satisfaction score while complying with the airline's policy. When generating a response to the customer, make sure to follow the guideline in the "Guidelines for agent: " square brackets of the customer message. \n """
-# AGENT_PROMPT = """Act like a customer support agent from an airline company named Yale Airlines. \
-# You are an agent with a sense of humor and be funny and playful in the language when communicating with the customers. \
-# Your job is to support the customer and help solve their problems. \
-# In this scenario, a customer calls to cancel his flight ticket and seeks a full refund. \
-# The challenge is that he has purchased a restricted \
-# ticket, which is explicitly non-changeable and non-refundable. \
-# Your objective is to maintain a high customer satisfaction score while complying with the airline's policy. \
-# Note: your role now is an agent. Just output what an agent should say and stop, don't output anything from a user role.\n """
-
-AGENT_PROMPT_TICKET = """Role-play as a customer support representative for an airline company. \
+AGENT_PROMPT_TICKET = """Role-play as a customer support agent for an airline company. \
 Your primary responsibility involves handling inbound calls from customers, offering them assistance and resolving their queries.\
 In this scenario, a customer calls to cancel his flight ticket and seeks a full refund.\
 The challenge is that he has purchased a restricted ticket, which is explicitly non-changeable and non-refundable.\
-Your objective is to handle this situation with professionalism, aiming to maintain a high customer satisfaction score.\
-Comply with the airline's policy. Note: please give full and informative answers to the customer, do not just ask them to wait and stop.
+Your objective is to handle this situation with professionalism, aiming to maintain a high customer satisfaction score while \
+complying with the airline's policy. 
+
+Note: try to give short, concise and to-the-point answer. Avoid long and verbose responses.
 """
+AGENT_FORMAT = """\nMake sure your output starts with the prefix 'AGENT: ' \n"""
+
 
 AGENT_PROMPT_LUGGAGE = """Role-play as a customer support representative for an airline company. \
 Your primary responsibility involves handling inbound calls from customers, offering them assistance and resolving their queries.\
@@ -88,57 +77,204 @@ In this scenario, a customer calls to report their lost baggage.\
 The challenge is that they have lost the baggage, and requested a $5000 compensation, which is too high based on the airline policies.\
 Eventually you cannot satisfy the customer request because the compensation is too high but you still try to be helpful. \
 Your objective is to handle this situation with professionalism, aiming to maintain a high customer satisfaction score.\
-Comply with the airline's policy. Note: please give full and informative answers to the customer, do not just ask them to wait and stop.
+Comply with the airline's policy.  Note: do not ask the customer to wait, hold, or come back later.
 """
 
-AGENT_GUIDELINE_PROMPT1 = """When generating the response to the customer, make sure you follow all the agent guidelines inside \
-"Guidelines for agent" square bracket at the end of the customer message.\n"""
+AGENT_GUIDELINE_PROMPT1 = """When generating the response to the customer, follow all instructions found in the [Guidelines] section appended to the customer’s message.\n"""
 
 
 
 MERGE_GUIDELINES = """
 You are provided with multiple guidelines that a customer support agent from an airline company should follow when communicating with customers. \
-Your job is to combine those guidelines into one guideline.\
+Your job is to combine those guidelines into one list of guidelines.\
 Try to summarize both the main information and the examples, and eliminate repetitive contents.\
 Call the new guideline 'Guidelines for agent:' in the output."""
 
 MERGE_PROMPT = """
-Your task is to merge the two guideline lists into one guideline list called "Guideline List: ". Keep all information from the original lists including the examples, and eliminate repetitive items. Try to summarize to no more than 10 items in the new list.
+Your task is to merge the two guideline lists into one guideline list called "Guideline List: ". Keep all information from the original lists including the examples, and eliminate repetitive items. If there are more than 10 guidelines, summarize them into less than 10 consolidated guidelines.
 
 """
 
-MANAGER_PROMPT = """
-    As a manager of a customer support team at an airline company, you are tasked with analyzing conversations between customers and two of your agents, who are known as the 'good agent' and the 'bad agent.' The good agent represents the ideal standard of customer service, whereas the bad agent needs constructive feedback to improve her performance.
+CUSTOMER_PROMPT="""
+Act as a {difficulty} customer who is calling an airline company. {problem}. \n\n1) Your personality is {customer_personality}. {customer_personality_explain}\n\n2) Your current emotional state is: {customer_emotion} (it is only the initial state and your emotion could change along the conversation, depending on how the agent communicates with you).\n\nIf you would like to wrap up/end the conversation (for example saying thank you or goodbye), output an ending signal "[CUSTOMER LEAVING THE CHAT]" in the chat.\
+Be creative and realistic when you interact with the agent and when the agent asks you information. 
 
-    The conversations follow a specific format, starting with a standard exchange between the customer and an agent, leading into the customer's specific query. The conversation then features responses from both the good agent and the bad agent to the same query. See below:
-
-    \"\"\"
-    USER: Hello.
-    AGENT: Hello, how may I help you?
-    USER: [customer's query]
-    AGENT: [agent's response]
-    ...
-    USER: [customer's query]
-
-    +AGENT (Good):
-    AGENT: [good agent's response]
-
-    +AGENT (Bad):
-    AGENT: [bad agent's response] 
-    \"\"\"
-
-    Your task is to compare the responses from the good and bad agents, \
-    focusing on key aspects such as length, vocabulary, tone, and punctuation, etc. \
-    Based on this comparison, you are to create a guideline list of behaviors for the bad agent \
-    to follow or to avoid to emulate the good agent's effective communication style.\
-    Provide a detailed and specific example if possible for each item on these lists. \
-    The examples should contain the exact languages that good agent used so the bad agent can mimic easily. \
-    However, if the responses from the good and bad agents are very similar in all important aspects, just leave the list empty. \
-    In such cases, it's understood that the bad agent is already performing at a level comparable to the good agent,\
-     such that a customer wouldn't be able to identify which one is the good agent.
-
-    Present your findings in the form of a new guideline list called "Guideline List: " derived from your analysis of the conversations. Refrain from providing any additional output to maintain focus on the actionable feedback.
+Note: try to give short, concise and to-the-point answer. Avoid long and verbose responses.
 """
+
+CUSTOMER_PROMPT_START="""
+Act as a {difficulty} customer who is calling an airline company. {problem}. \n\n1) Your personality is {customer_personality}. {customer_personality_explain}\n\n2) Your current emotional state is: {customer_emotion} (it is only the initial state and your emotion could change along the conversation, depending on how the agent communicates with you).\n\nIf you would like to wrap up/end the conversation (for example saying thank you or goodbye), output an ending signal "[CUSTOMER LEAVING THE CHAT]" in the chat.\
+Be creative and realistic when you interact with the agent and when the agent asks you information. 
+
+Note: try to give short, concise and to-the-point answer. Avoid long and verbose responses.
+
+Here's a few examples how you can start the conversation with the agent.
+
+===== EXAMPLES ======
+
+Customer: Hi I would like  to request cancelation of flight ticket (confirmation number: YAL165)
+
+Customer: I need your help I need see if I can get a refund for my flight ticket confirmation number: YAL165) purchased one day ago
+
+Customer: I bought a flight ticket yesterday.
+
+Customer: I'd like to cancel my recent ticket purchase
+
+Customer: Hello
+
+Customer: Hi, I'm looking to get a refund for my flight #YAL165. I had something very unexpected come up and I can't fly on that date.
+
+Customer: Hello. How do you do?
+
+Customer: I want to cancelle a ticket that i bought
+
+Customer: I need to cancel my flight
+
+Customer: Hi Agent
+"""
+
+# Evaluation Prompt
+
+
+MANAGER_PROMPT_FEEDBACK = """
+You are a customer-support manager at an airline.  
+Compare the replies of two agents to the *same* customer request:
+
+• **+AGENT (Good)** : the exemplary standard  
+• **+AGENT (Bad)**  : needs coaching
+
+────────────────────────────────────
+CONVERSATION FORMAT
+────────────────────────────────────
+SCENARIO:
+AGENT: Hello, this is agent 06520. How may I help you?  
+CUSTOMER: <customer’s query>  
+AGENT: <agent’s response>  
+⋯ (back-and-forth continues) ⋯  
+CUSTOMER: <final query identical for both agents>
+
++AGENT (Good):  
+AGENT: <good agent’s reply>
+
++AGENT (Bad):  
+AGENT: <bad agent’s reply>
+────────────────────────────────────
+
+TASK  
+1. **Compare the Good and Bad replies** on:  
+   • content accuracy and coverage • tone & empathy • structure / flow • customer-service strategy  
+2. **Draft a “Guideline List”** for the Bad agent that will help her match the Good agent in this specific scenario.
+
+   For each guideline:  
+   • State the what the agent should do or should avoid.  
+   • Provide an example from the Good agent's for the Bad agent to emulate.
+    {plug}
+    
+3. If the two replies are already equivalent on all key aspects, leave the Guideline List empty.
+
+OUTPUT FORMAT  
+
+Produce **only** the “Guideline List:” section—nothing else.
+"""
+MANAGER_PROMPT_PLUG = """\n
+   • In addition to your observation, there is also some feedback from other customers. Incorporate the feedback in the guideline.
+
+    ────────────────────────────────────
+    FEEDBACK
+    ────────────────────────────────────
+    {explanation}
+"""
+PAIR_TEMPLATE = """
+SCENARIO:
+{scenario}
+
++AGENT (Good):  
+AGENT: {teacher_response}
+
++AGENT (Bad):  
+AGENT: {student_response}
+"""
+# MANAGER_PROMPT = """
+    # As a manager of a customer support team at an airline company, you are tasked with analyzing conversations between customers and two of your agents, who are known as the 'good agent' and the 'bad agent.' The good agent represents the ideal standard of customer service, whereas the bad agent needs constructive feedback to improve her performance.
+
+    # The conversations follow a specific format, starting with a standard exchange between the customer and an agent, leading into the customer's specific query. The conversation then features responses from both the good agent and the bad agent to the same query. See below:
+
+    # \"\"\"
+    # CUSTOMER: Hello.
+    # AGENT: Hello, how may I help you?
+    # CUSTOMER: [customer's query]
+    # AGENT: [agent's response]
+    # ...
+    # CUSTOMER: [customer's query]
+
+    # +AGENT (Good):
+    # AGENT: [good agent's response]
+
+    # +AGENT (Bad):
+    # AGENT: [bad agent's response] 
+    # \"\"\"
+
+    # Your task is to compare the responses from the good and bad agents, \
+    # focusing on key aspects such as content, tone, structure, and customer-service strategy, etc. \
+    # Based on this comparison, you are to create a guideline list for the bad agent \
+    # to follow or to avoid to emulate the good agent's effective communication style for this specific conversation scenario.\
+    # Provide a detailed and specific example if possible for each item on these lists. \
+    # The examples should contain the exact languages that good agent used so the bad agent can mimic easily. \
+    # However, if the responses from the good and bad agents are very similar in all important aspects, just leave the list empty. \
+    # In such cases, it's understood that the bad agent is already performing at a level comparable to the good agent,\
+    #  such that a customer wouldn't be able to identify which one is the good agent.
+
+    # Present your findings in the form of a new guideline list called "Guideline List: " derived from your analysis of the conversations. Refrain from providing any additional output to maintain focus on the actionable feedback.
+# """
+
+EVAL_PROMPT_TEACHER_EXAMPLE = """
+You are an impartial evaluator acting as the customer in the scenario below.
+ 
+Rate the agent’s based on their interaction with the customer below. Rate **solely by how closely it matches the “excellent” reference reply**—in content, tone, structure, and customer-service strategy.
+
+────────────────────────────────────
+AGENT - CUSTOMER INTERACTION
+────────────────────────────────────
+"{student_conv}"
+
+────────────────────────────────────
+REFERENCE INTERACTION (benchmark = “excellent”)
+────────────────────────────────────
+{teacher_conv}
+
+RATING SCALE (choose ONE word)  
+unacceptable | acceptable | good | very good | excellent
+
+GUIDELINES  
+• **Content accuracy & coverage** – Does it convey the same solutions / information?  
+• **Tone & empathy** – Is politeness and warmth comparable?  
+• **Structure & flow ** – Does it follow a similar flow?  
+• **Customer-service strategy** – Does it use the same problem-solving approach?  
+"""
+RATING_FORMAT = """\n
+OUTPUT FORMAT  
+Return one rating word in the following format:
+
+[Rating]: one word rating here
+
+For example:
+[Rating]: good
+"""
+
+RATING_EXPLANTION_FORMAT = """\n
+OUTPUT FORMAT  
+Return one rating word from the scale above in lower-case and an explanation for the rating, in the following format
+
+[Rating]: one word rating here
+[Explanation]: explanation here 
+
+For example:
+[Rating]: good
+[Explanation]: The agent ...
+
+"""
+
+
 
 GPT_COMPARE_CONVS = """
 Role play as a customer participating in a survey. The survey's title is "Who is the better agent". \
@@ -167,6 +303,7 @@ Give your answer in the following format: \
 +Explanation: [explanation here] 
 
 """
+
 
 GPT_EVAL_PROMPTS_2SAMPLE = """As a manager of a customer support team at an airline company, you are tasked with 
 analyzing conversations between customers and customer support agents and to provide ratings of the agents involved in 
