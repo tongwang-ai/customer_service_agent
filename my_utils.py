@@ -11,6 +11,7 @@ import my_prompts
 import time
 import replicate
 import numpy as np
+import streamlit as st
 os.environ["REPLICATE_API_TOKEN"]=st.secrets["REPLICATE_API_TOKEN"]
 
 def euclidean(v1, v2):
