@@ -170,10 +170,7 @@ with col1:
         st.session_state["clear_input_agent_1"] = True
         st.rerun()
         
-    value = st.session_state.get("rating_agent_1", 1)
-    if value < 1 or value > 5:
-        value = 1
-        st.session_state["rating_agent_1"] = 1
+
     
     st.slider(
         "Rate Agent 1 - 1 means very dissatisfied and 5 means very satisfied",
@@ -206,10 +203,7 @@ with col2:
         )
         st.session_state["clear_input_agent_2"] = True
         st.rerun()
-    value = st.session_state.get("rating_agent_2", 1)
-    if value < 1 or value > 5:
-        value = 1
-        st.session_state["rating_agent_2"] = 1
+
         
     st.slider(
         "Rate Agent 2 - 1 means very dissatisfied and 5 means very satisfied",
