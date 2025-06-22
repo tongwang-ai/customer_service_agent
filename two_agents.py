@@ -125,12 +125,11 @@ def send_message(agent, chat_history_key, input_key, use_guideline):
                 conv_txt += "\n\nCustomer: " + m["content"]
         conv_txt = conv_txt.strip()
 
-        print('conv_txt = {}'.format(conv_txt))
         if use_guideline:    
             best_guideline = get_best_guideline(conv_txt, embedding_client, scenario_embeds, guidelines)
         else:
             best_guideline = None
-        print('\n the chat so far is {}'.format(conv_txt))
+
         # Pass all turns to the LLM
         llm_response = gen_agent_response(
             conv_txt,    # <<<< ALL turns, not just the most recent
