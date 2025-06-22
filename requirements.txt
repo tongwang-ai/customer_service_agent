@@ -4,3 +4,5 @@ psycopg2-binary
 tiktoken
 sentencepiece
 replicate
+time
+os
