@@ -162,6 +162,7 @@ with col1:
     if st.session_state.get("clear_input_agent_1"):
         input_box.text_input("Enter your message to Agent 1", value="", key="user_input_agent_1_clear")
         st.session_state["clear_input_agent_1"] = False
+        st.session_state["user_input_agent_1"] = "" 
         
     # LLM response handling
     if st.session_state["await_agent_response_agent_1"]:
