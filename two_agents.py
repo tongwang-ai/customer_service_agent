@@ -162,7 +162,6 @@ with col1:
     if st.session_state.get("clear_input_agent_1"):
         input_box.text_input("Enter your message to Agent 1", value="", key="user_input_agent_1_clear")
         st.session_state["clear_input_agent_1"] = False
-        st.session_state["user_input_agent_1"] = "" 
         
     # LLM response handling
     if st.session_state["await_agent_response_agent_1"]:
@@ -199,8 +198,10 @@ with col2:
     if "just_sent_agent_2" not in st.session_state:
         st.session_state["just_sent_agent_2"] = False
 
-    user_message_agent_2 = st.text_input(
-        "Enter your message to Agent 2", key="user_input_agent_2"
+    input_box = st.empty()
+    user_message_agent_2 = input_box.text_input(
+        "Enter your message to Agent 2",
+        key="user_input_agent_2"
     )
 
     if st.button("Send to Agent 2", key="send_btn_agent_2"):
@@ -210,8 +211,14 @@ with col2:
             })
             st.session_state["await_agent_response_agent_2"] = True
             st.session_state["just_sent_agent_2"] = True
+            st.session_state["clear_input_agent_2"] = True  # trigger box clearing
             st.rerun()
 
+    # Clear input box on rerun if needed
+    if st.session_state.get("clear_input_agent_2"):
+        input_box.text_input("Enter your message to Agent 2", value="", key="user_input_agent_2_clear")
+        st.session_state["clear_input_agent_2"] = False
+        
     # LLM response handling
     if st.session_state["await_agent_response_agent_2"]:
         send_message(
@@ -231,6 +238,7 @@ with col2:
         "Rate Agent 2 - 1 means very dissatisfied and 5 means very satisfied",
         1, 5, value=1, key="rating_agent_2"
     )
+
 
 
 better_agent = st.radio("Which agent do you think performed better?", ("Agent 1", "Agent 2"))
