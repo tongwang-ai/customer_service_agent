@@ -125,8 +125,11 @@ col1, _, col2 = st.columns([1, 0.1, 1])
 with col1:
     st.write("**Chat with Agent 1**")
     for message in st.session_state["chat_history_agent_1"]:
-        role_label = "**You:**" if message["role"] == "user" else "**Agent 1:**"
-        st.markdown(f"{role_label} {message['content']}")
+        if message["role"] == "user":
+            st.markdown(f"**You:** {message['content']}")
+        elif message["role"] == "assistant":
+            st.markdown(f"**Agent 1:** {message['content']}")
+
 
     if st.session_state["clear_input_agent_1"]:
         st.session_state["user_input_agent_1"] = ""
@@ -143,8 +146,10 @@ with col1:
 with col2:
     st.write("**Chat with Agent 2**")
     for message in st.session_state["chat_history_agent_2"]:
-        role_label = "**You:**" if message["role"] == "user" else "**Agent 2:**"
-        st.markdown(f"{role_label} {message['content']}")
+        if message["role"] == "user":
+            st.markdown(f"**You:** {message['content']}")
+        elif message["role"] == "assistant":
+            st.markdown(f"**Agent 2:** {message['content']}")
 
     if st.session_state["clear_input_agent_2"]:
         st.session_state["user_input_agent_2"] = ""
