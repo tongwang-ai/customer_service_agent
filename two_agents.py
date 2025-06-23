@@ -157,7 +157,7 @@ with col1:
         )
 
     # Button logic
-    if st.button("Send to Agent 1", key="send_btn_agent_1"):
+    if st.button("Send to Agent 1", key="send_btn_agent_1", disabled=st.session_state.get("await_agent_response_agent_1", False))::
         if user_message:
             st.session_state["chat_history_agent_1"].append({"role": "user", "content": user_message})
             st.session_state["await_agent_response_agent_1"] = True
