@@ -9,7 +9,12 @@ from openai import OpenAI
 from datetime import datetime
 import pickle
 import os
-start_time = datetime.now()
+
+
+if "start_time" not in st.session_state:
+    st.session_state["start_time"] = datetime.now()
+start_time = st.session_state["start_time"]
+
 student_model = "meta/llama-2-7b-chat"
 embedding_client = OpenAI(api_key=st.secrets["OPENAI_API_KEY"])
 
