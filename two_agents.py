@@ -176,7 +176,7 @@ with col1:
 
 
 
-with col2:
+with col2
     st.write("**Chat with Agent 2**")
     for msg in st.session_state["chat_history_agent_2"]:
         if msg["role"] == "user":
@@ -184,51 +184,41 @@ with col2:
         elif msg["role"] == "assistant":
             st.markdown(f"**Agent 2:** {msg['content']}")
 
-    if "await_agent_response_agent_2" not in st.session_state:
-        st.session_state["await_agent_response_agent_2"] = False
-    if "just_sent_agent_2" not in st.session_state:
-        st.session_state["just_sent_agent_2"] = False
+    # Ensure flags exist
+    st.session_state.setdefault("await_agent_response_agent_2", False)
+    st.session_state.setdefault("clear_input_agent_2", False)
 
-    input_box = st.empty()
-    user_message_agent_2 = input_box.text_input(
-        "Enter your message to Agent 2",
-        key="user_input_agent_2"
-    )
-
-    if st.button("Send to Agent 2", key="send_btn_agent_2"):
-        if user_message_agent_2:
-            st.session_state["chat_history_agent_2"].append({
-                "role": "user", "content": user_message_agent_2
-            })
-            st.session_state["await_agent_response_agent_2"] = True
-            st.session_state["just_sent_agent_2"] = True
-            st.session_state["clear_input_agent_2"] = True  # trigger box clearing
-            st.rerun()
-
-    # Clear input box on rerun if needed
-    if st.session_state.get("clear_input_agent_2"):
-        input_box.text_input("Enter your message to Agent 2", value="", key="user_input_agent_2_clear")
-        st.session_state["clear_input_agent_2"] = False
-        
-    # LLM response handling
-    if st.session_state["await_agent_response_agent_2"]:
-        send_message(
-            "agent_2", 
-            "chat_history_agent_2", 
-            "user_input_agent_2", 
-            st.session_state["guideline_for_agent_2"]
+    # Use placeholder to control input rendering
+    input_placeholder = st.empty()
+    if st.session_state["clear_input_agent_2"]:
+        user_message = input_placeholder.text_input(
+            "Enter your message to Agent 2",
+            value="",
+            key="temp_input_agent_2"
         )
-        st.session_state["await_agent_response_agent_2"] = False
+        st.session_state["clear_input_agent_2"] = False
+    else:
+        user_message = input_placeholder.text_input(
+            "Enter your message to Agent 2",
+            key="user_input_agent_2"
+        )
 
-        # Only rerun once to display the agent response
-        if st.session_state["just_sent_agent_2"]:
-            st.session_state["just_sent_agent_2"] = False
+    # Button logic
+    if st.button("Send to Agent 2", key="send_btn_agent_2", disabled=st.session_state.get("await_agent_response_agent_2", False)):
+        if user_message:
+            st.session_state["chat_history_agent_2"].append({"role": "user", "content": user_message})
+            st.session_state["await_agent_response_agent_2"] = True
+            st.session_state["clear_input_agent_2"] = True
             st.rerun()
 
-    st.slider(
-        "Rate Agent 2 - 1 means very dissatisfied and 5 means very satisfied",
-        1, 5, value=1, key="rating_agent_2"
-    )
+    # Agent response handling
+    if st.session_state["await_agent_response_agent_2"]:
+        send_message("agent_2", "chat_history_agent_2", "user_input_agent_2", st.session_state["guideline_for_agent_2"])
+        st.session_state["await_agent_response_agent_2"] = False
+        st.rerun()  # triggers UI to refresh with agent's response
+
+    # Rating slider
+    st.slider("Rate Agent 2 …", 1, 5, value=1, key="rating_agent_2")
 
 
 
