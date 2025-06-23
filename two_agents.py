@@ -125,7 +125,6 @@ def send_message(agent, chat_history_key, input_key, use_guideline):
         llm_response = gen_agent_response(conv_txt, student_model, client=None, guidelines=best_guideline, temperature=0.3)
         st.session_state[chat_history_key].append({"role": "assistant", "content": llm_response})
         st.session_state[f"await_agent_response_{agent}"] = False
-        st.session_state["clear_input_" + input_key.split("_")[-1]] = True
 
 
 col1, _, col2 = st.columns([1, 0.1, 1])
@@ -138,10 +137,6 @@ with col1:
         elif message["role"] == "assistant":
             st.markdown(f"**Agent 1:** {message['content']}")
 
-    # if st.session_state["clear_input_agent_1"]:
-    #     st.session_state["user_input_agent_1"] = ""
-    #     st.session_state["clear_input_agent_1"] = False
-
     st.text_input("Enter your message to Agent 1", key="user_input_agent_1")
 
     # --- BUTTON LOGIC ---
@@ -151,7 +146,6 @@ with col1:
             st.session_state["chat_history_agent_1"].append({"role": "user", "content": user_message})
             st.session_state["await_agent_response_agent_1"] = True
             st.session_state["user_input_agent_1"] = ""
-            # st.session_state["clear_input_agent_1"] = False
             
             st.rerun()
 
@@ -169,10 +163,6 @@ with col2:
         elif message["role"] == "assistant":
             st.markdown(f"**Agent 2:** {message['content']}")
 
-    # if st.session_state["clear_input_agent_2"]:
-    #     st.session_state["user_input_agent_2"] = ""
-    #     st.session_state["clear_input_agent_2"] = False
-
     st.text_input("Enter your message to Agent 2", key="user_input_agent_2")
 
     # --- BUTTON LOGIC ---
@@ -181,7 +171,6 @@ with col2:
         if user_message:
             st.session_state["chat_history_agent_2"].append({"role": "user", "content": user_message})
             st.session_state["user_input_agent_2"] = ""
-            # st.session_state["clear_input_agent_2"] = False
             st.session_state["await_agent_response_agent_2"] = True
             st.rerun()
 
