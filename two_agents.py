@@ -176,7 +176,7 @@ with col1:
 
 
 
-with col2
+with col2:
     st.write("**Chat with Agent 2**")
     for msg in st.session_state["chat_history_agent_2"]:
         if msg["role"] == "user":
