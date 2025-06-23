@@ -179,27 +179,49 @@ with col1:
 
 with col2:
     st.write("**Chat with Agent 2**")
-    for message in st.session_state["chat_history_agent_2"]:
-        if message["role"] == "user":
-            st.markdown(f"**You:** {message['content']}")
-        elif message["role"] == "assistant":
-            st.markdown(f"**Agent 2:** {message['content']}")
+    for msg in st.session_state["chat_history_agent_1"]:
+        if msg["role"] == "user":
+            st.markdown(f"**You:** {msg['content']}")
+        elif msg["role"] == "assistant":
+            st.markdown(f"**Agent 2:** {msg['content']}")
 
-    
+    if "await_agent_response_agent_2" not in st.session_state:
+        st.session_state["await_agent_response_agent_1"] = False
+    if "just_sent_agent_2" not in st.session_state:
+        st.session_state["just_sent_agent_2"] = False
 
-    # --- BUTTON LOGIC ---
-    st.text_input("Enter your message to Agent 2", key="user_input_agent_2")
-    
-    if st.button("Send to Agent 2"):
-        user_message = st.session_state["user_input_agent_2"]
-        if user_message:
-            st.session_state["chat_history_agent_2"].append({"role": "user", "content": user_message})
+    user_message_agent_2 = st.text_input(
+        "Enter your message to Agent 2", key="user_input_agent_2"
+    )
+
+    if st.button("Send to Agent 2", key="send_btn_agent_2"):
+        if user_message_agent_1:
+            st.session_state["chat_history_agent_2"].append({
+                "role": "user", "content": user_message_agent_2
+            })
             st.session_state["await_agent_response_agent_2"] = True
+            st.session_state["just_sent_agent_2"] = True
             st.rerun()
-    # After rerun, if a user message was just appended but no agent response yet, generate it:
-    send_message("agent_2", "chat_history_agent_2", "user_input_agent_2", st.session_state["guideline_for_agent_2"])
 
-    st.slider("Rate Agent 2 - 1 means very dissatisfied and 5 means very satisfied", 1, 5, value=1, key="rating_agent_2")
+    # LLM response handling
+    if st.session_state["await_agent_response_agent_2"]:
+        send_message(
+            "agent_2", 
+            "chat_history_agent_2", 
+            "user_input_agent_2", 
+            st.session_state["guideline_for_agent_2"]
+        )
+        st.session_state["await_agent_response_agent_2"] = False
+
+        # Only rerun once to display the agent response
+        if st.session_state["just_sent_agent_2"]:
+            st.session_state["just_sent_agent_2"] = False
+            st.rerun()
+
+    st.slider(
+        "Rate Agent 2 - 1 means very dissatisfied and 5 means very satisfied",
+        1, 5, value=1, key="rating_agent_1"
+    )
 
 
 better_agent = st.radio("Which agent do you think performed better?", ("Agent 1", "Agent 2"))
