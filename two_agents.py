@@ -272,8 +272,6 @@ if st.button("Submit Feedback", disabled=not_enough_turns or st.session_state.ge
     connection.commit()
     cursor.close()
     connection.close()
-    st.session_state["show_thank_you"] = True   # <--- ADD THIS
-    # st.success("Your response has been recorded. Thank you for your participation. The completion code is: 06520.")
-    # st.session_state["reset_now"] = True
-    # st.rerun()
+    st.session_state["show_thank_you"] = True   
+
 
