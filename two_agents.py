@@ -147,7 +147,7 @@ with col1:
         if user_message:
             st.session_state["chat_history_agent_1"].append({"role": "user", "content": user_message})
             st.session_state["await_agent_response_agent_1"] = True
-            st.session_state["user_input_agent_1"] = ""
+            del st.session_state["user_input_agent_1"]
             st.rerun()
             
     with input_placeholder:
