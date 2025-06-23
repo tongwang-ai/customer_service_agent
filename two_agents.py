@@ -36,8 +36,8 @@ if st.session_state.get("reset_now", False):
         st.session_state["user_input_agent_2"] = ""
         st.session_state["clear_input_agent_1"] = False
         st.session_state["clear_input_agent_2"] = False
-        st.session_state["rating_agent_1"] = 0
-        st.session_state["rating_agent_2"] = 0
+        st.session_state["rating_agent_1"] = 1
+        st.session_state["rating_agent_2"] = 1
         st.session_state["comments"] = ""
         st.session_state["form_submitted"] = False
 
