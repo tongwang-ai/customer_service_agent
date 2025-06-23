@@ -140,11 +140,6 @@ with col1:
     
 
     # --- BUTTON LOGIC ---
-    st.text_input("Enter your message to Agent 1", key="user_input_agent_1")
-    
-    # Agent 1 input (inside col1)
-    
-    # ✅ Always define this exactly once
     user_message_agent_1 = st.text_input("Enter your message to Agent 1", key="user_input_agent_1")
     
     # ✅ Button to send message
