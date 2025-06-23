@@ -92,7 +92,9 @@ st.markdown(
         <b>Guidelines:</b><br>
         - Use persuasive and realistic arguments to achieve your goal.<br>
         - If the conversation requires details not included in the instruction, use your best judgment to provide reasonable and realistic information.<br><br>
-        <b>Note:</b> It takes a few seconds for the agent to respond. Do not refresh the page while waiting for a response.
+        <span style="color: red; font-weight: bold;">
+            Note: It takes up to 1 minute for the agent to respond. Please be patient and do not refresh the page while waiting for a response.
+        </span>
         </p>
     </div>
     """,
