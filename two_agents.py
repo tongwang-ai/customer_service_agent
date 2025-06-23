@@ -223,9 +223,9 @@ better_agent = st.radio("Which agent do you think performed better?", ("Agent 1"
 
 # --- Turn count logic START ---
 # Exclude 'system' messages when counting turns
-agent_1_turns = len([msg for msg in st.session_state["chat_history_agent_1"] if msg["role"] != "system"])
-agent_2_turns = len([msg for msg in st.session_state["chat_history_agent_2"] if msg["role"] != "system"])
-min_turns_required = 5
+agent_1_turns = len([msg for msg in st.session_state["chat_history_agent_1"] if msg["role"] != "user"])
+agent_2_turns = len([msg for msg in st.session_state["chat_history_agent_2"] if msg["role"] != "user"])
+min_turns_required = 4
 not_enough_turns = agent_1_turns < min_turns_required or agent_2_turns < min_turns_required
 
 if not_enough_turns:
