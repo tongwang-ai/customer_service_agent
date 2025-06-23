@@ -109,10 +109,24 @@ def get_best_guideline(conv_txt, embedding_client, scenario_embeds, guidelines):
     closest_idx, _ = find_k_closest_embedding(conv_embed, scenario_embeds)
     return guidelines[closest_idx]
 
+# def send_message(agent, chat_history_key, input_key, use_guideline):
+#     user_message = st.session_state[input_key]
+#     if user_message:
+#         st.session_state[chat_history_key].append({"role": "user", "content": user_message})
+#         conversation = [m for m in st.session_state[chat_history_key] if m["role"] != "system"]
+#         conv_txt = ""
+#         for m in conversation:
+#             if m["role"] == "assistant":
+#                 conv_txt += "\n\nAgent: " + m["content"]
+#             elif m["role"] == "user":
+#                 conv_txt += "\n\nCustomer: " + m["content"]
+#         conv_txt = conv_txt.strip()
+#         best_guideline = get_best_guideline(conv_txt, embedding_client, scenario_embeds, guidelines) if use_guideline else None
+#         llm_response = gen_agent_response(conv_txt, student_model, client=None, guidelines=best_guideline, temperature=0.3)
+#         st.session_state[chat_history_key].append({"role": "assistant", "content": llm_response})
 def send_message(agent, chat_history_key, input_key, use_guideline):
-    user_message = st.session_state[input_key]
-    if user_message:
-        st.session_state[chat_history_key].append({"role": "user", "content": user_message})
+    # Only handle agent response if 'await_agent_response' flag is set
+    if st.session_state.get(f"await_agent_response_{agent}", False):
         conversation = [m for m in st.session_state[chat_history_key] if m["role"] != "system"]
         conv_txt = ""
         for m in conversation:
@@ -124,9 +138,32 @@ def send_message(agent, chat_history_key, input_key, use_guideline):
         best_guideline = get_best_guideline(conv_txt, embedding_client, scenario_embeds, guidelines) if use_guideline else None
         llm_response = gen_agent_response(conv_txt, student_model, client=None, guidelines=best_guideline, temperature=0.3)
         st.session_state[chat_history_key].append({"role": "assistant", "content": llm_response})
+        st.session_state[f"await_agent_response_{agent}"] = False
+        st.session_state["clear_input_" + input_key.split("_")[-1]] = True
+
 
 col1, _, col2 = st.columns([1, 0.1, 1])
 
+# with col1:
+#     st.write("**Chat with Agent 1**")
+#     for message in st.session_state["chat_history_agent_1"]:
+#         if message["role"] == "user":
+#             st.markdown(f"**You:** {message['content']}")
+#         elif message["role"] == "assistant":
+#             st.markdown(f"**Agent 1:** {message['content']}")
+
+
+#     if st.session_state["clear_input_agent_1"]:
+#         st.session_state["user_input_agent_1"] = ""
+#         st.session_state["clear_input_agent_1"] = False
+
+#     st.text_input("Enter your message to Agent 1", key="user_input_agent_1")
+#     if st.button("Send to Agent 1"):
+#         send_message("agent_1", "chat_history_agent_1", "user_input_agent_1", st.session_state["guideline_for_agent_1"])
+#         st.session_state["clear_input_agent_1"] = True
+#         st.rerun()
+
+#     st.slider("Rate Agent 1 - 1 means very dissatisfied and 5 means very satisfied", 1, 5, value=1, key="rating_agent_1")
 with col1:
     st.write("**Chat with Agent 1**")
     for message in st.session_state["chat_history_agent_1"]:
@@ -135,20 +172,48 @@ with col1:
         elif message["role"] == "assistant":
             st.markdown(f"**Agent 1:** {message['content']}")
 
-
     if st.session_state["clear_input_agent_1"]:
         st.session_state["user_input_agent_1"] = ""
         st.session_state["clear_input_agent_1"] = False
 
     st.text_input("Enter your message to Agent 1", key="user_input_agent_1")
+
+    # --- BUTTON LOGIC ---
     if st.button("Send to Agent 1"):
-        send_message("agent_1", "chat_history_agent_1", "user_input_agent_1", st.session_state["guideline_for_agent_1"])
-        st.session_state["clear_input_agent_1"] = True
-        st.rerun()
+        user_message = st.session_state["user_input_agent_1"]
+        if user_message:
+            st.session_state["chat_history_agent_1"].append({"role": "user", "content": user_message})
+            st.session_state["user_input_agent_1"] = ""
+            st.session_state["clear_input_agent_1"] = False
+            st.session_state["await_agent_response_agent_1"] = True
+            st.rerun()
+
+    # After rerun, if a user message was just appended but no agent response yet, generate it:
+    send_message("agent_1", "chat_history_agent_1", "user_input_agent_1", st.session_state["guideline_for_agent_1"])
 
     st.slider("Rate Agent 1 - 1 means very dissatisfied and 5 means very satisfied", 1, 5, value=1, key="rating_agent_1")
 
-with col2:
+
+# with col2:
+#     st.write("**Chat with Agent 2**")
+#     for message in st.session_state["chat_history_agent_2"]:
+#         if message["role"] == "user":
+#             st.markdown(f"**You:** {message['content']}")
+#         elif message["role"] == "assistant":
+#             st.markdown(f"**Agent 2:** {message['content']}")
+
+#     if st.session_state["clear_input_agent_2"]:
+#         st.session_state["user_input_agent_2"] = ""
+#         st.session_state["clear_input_agent_2"] = False
+
+#     st.text_input("Enter your message to Agent 2", key="user_input_agent_2")
+#     if st.button("Send to Agent 2"):
+#         send_message("agent_2", "chat_history_agent_2", "user_input_agent_2", st.session_state["guideline_for_agent_2"])
+#         st.session_state["clear_input_agent_2"] = True
+#         st.rerun()
+
+#     st.slider("Rate Agent 2 - 1 means very dissatisfied and 5 means very satisfied", 1, 5, value=1, key="rating_agent_2")
+with col1:
     st.write("**Chat with Agent 2**")
     for message in st.session_state["chat_history_agent_2"]:
         if message["role"] == "user":
@@ -161,12 +226,22 @@ with col2:
         st.session_state["clear_input_agent_2"] = False
 
     st.text_input("Enter your message to Agent 2", key="user_input_agent_2")
+
+    # --- BUTTON LOGIC ---
     if st.button("Send to Agent 2"):
-        send_message("agent_2", "chat_history_agent_2", "user_input_agent_2", st.session_state["guideline_for_agent_2"])
-        st.session_state["clear_input_agent_2"] = True
-        st.rerun()
+        user_message = st.session_state["user_input_agent_2"]
+        if user_message:
+            st.session_state["chat_history_agent_2"].append({"role": "user", "content": user_message})
+            st.session_state["user_input_agent_2"] = ""
+            st.session_state["clear_input_agent_2"] = False
+            st.session_state["await_agent_response_agent_2"] = True
+            st.rerun()
+
+    # After rerun, if a user message was just appended but no agent response yet, generate it:
+    send_message("agent_2", "chat_history_agent_2", "user_input_agent_2", st.session_state["guideline_for_agent_2"])
 
     st.slider("Rate Agent 2 - 1 means very dissatisfied and 5 means very satisfied", 1, 5, value=1, key="rating_agent_2")
+
 
 better_agent = st.radio("Which agent do you think performed better?", ("Agent 1", "Agent 2"))
 
@@ -178,7 +253,7 @@ st.text_area("Your comments:", key="comments", value=st.session_state.get("comme
 # Count agent responses
 agent_1_turns = len([msg for msg in st.session_state["chat_history_agent_1"] if msg["role"] == "user"])
 agent_2_turns = len([msg for msg in st.session_state["chat_history_agent_2"] if msg["role"] == "user"])
-num_turns = 4
+num_turns = 0
 not_enough_turns = agent_1_turns < num_turns or agent_2_turns < num_turns
 
 if not_enough_turns:
