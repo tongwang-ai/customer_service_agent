@@ -256,10 +256,10 @@ st.text_area("Your comments:", key="comments", value=st.session_state.get("comme
 
 
 # Count agent responses
-agent_1_turns = len([msg for msg in st.session_state["chat_history_agent_1"] if msg["role"] == "user"])
-agent_2_turns = len([msg for msg in st.session_state["chat_history_agent_2"] if msg["role"] == "user"])
+agent_1_turns = len([msg for msg in st.session_state["chat_history_agent_1"] if msg["role"] == "assistant"])
+agent_2_turns = len([msg for msg in st.session_state["chat_history_agent_2"] if msg["role"] == "assistant"])
 num_turns = 4
-not_enough_turns = agent_1_turns < num_turns or agent_2_turns < num_turns
+not_enough_turns = agent_1_turns < num_turns+1 or agent_2_turns < num_turns+1
 
 if not_enough_turns:
     st.warning("Please complete **4 full exchanges with each agent** (i.e., you send a message *and* receive a response, 4 times per agent) before submitting your feedback.")
