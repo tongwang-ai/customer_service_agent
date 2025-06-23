@@ -37,8 +37,8 @@ if st.session_state.get("reset_now", False):
             {"role": "system", "content": my_prompts.AGENT_PROMPT_TICKET},
             {"role": "assistant", "content": "Hello, this is Agent 2, how can I help you?"}
         ]
-        st.session_state["user_input_agent_1"] = ""
-        st.session_state["user_input_agent_2"] = ""
+        # st.session_state["user_input_agent_1"] = ""
+        # st.session_state["user_input_agent_2"] = ""
         st.session_state["clear_input_agent_1"] = False
         st.session_state["clear_input_agent_2"] = False
         st.session_state["rating_agent_1"] = 1
