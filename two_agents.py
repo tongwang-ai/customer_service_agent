@@ -91,7 +91,8 @@ st.markdown(
         <b>Objective:</b> Negotiate for a refund as you would in a real-life situation.<br><br>
         <b>Guidelines:</b><br>
         - Use persuasive and realistic arguments to achieve your goal.<br>
-        - If the conversation requires details not included in the instruction, use your best judgment to provide reasonable and realistic information.<br><br>
+        - Try to have at least 4 rounds of back-and-forth dialogue with each agent.<br>
+        - If the conversation requires details not included in the instructions, use your best judgment to provide reasonable and realistic information.<br><br>
         <span style="color: red; font-weight: bold;">
             Note: It takes up to 1 minute for the agent to respond. Please be patient and do not refresh the page while waiting for a response.
         </span>
