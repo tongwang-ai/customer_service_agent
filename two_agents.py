@@ -273,5 +273,6 @@ if st.button("Submit Feedback", disabled=not_enough_turns or st.session_state.ge
     cursor.close()
     connection.close()
     st.session_state["show_thank_you"] = True   
+    st.rerun()
 
 
