@@ -175,7 +175,7 @@ num_turns = 1
 not_enough_turns = agent_1_turns < num_turns or agent_2_turns < num_turns
 
 if not_enough_turns:
-    st.warning("Please continue the conversation with both agents until each has at least 4 turns before submitting feedback.")
+    st.warning("Please complete **4 full exchanges with each agent** (i.e., you send a message *and* receive a response, 4 times per agent) before submitting your feedback.")
 
 if st.button("Submit Feedback", disabled=not_enough_turns or st.session_state.get("form_submitted", False)):
     st.session_state["form_submitted"] = True
