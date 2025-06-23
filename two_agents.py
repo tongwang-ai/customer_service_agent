@@ -134,7 +134,7 @@ with col1:
     for msg in st.session_state["chat_history_agent_1"]:
         if msg["role"] == "user":
             st.markdown(f"**You:** {msg['content']}")
-        elif message["role"] == "assistant":
+        elif msg["role"] == "assistant":
             st.markdown(f"**Agent 1:** {msg['content']}")
 
     if "await_agent_response_agent_1" not in st.session_state:
