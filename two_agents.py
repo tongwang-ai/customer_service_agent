@@ -183,20 +183,20 @@ if st.button("Submit Feedback", disabled=not_enough_turns or st.session_state.ge
     cursor = connection.cursor()
     conversation_agent_1 = json.dumps([msg for msg in st.session_state["chat_history_agent_1"] if msg["role"] != "system"])
     conversation_agent_2 = json.dumps([msg for msg in st.session_state["chat_history_agent_2"] if msg["role"] != "system"])
-    survey_time = datetime.now() - start_time
+    elapsed_time = datetime.now() - start_time
     agent_1_model = student_model + ("-guidelines" if st.session_state["guideline_for_agent_1"] else "-base")
     agent_2_model = student_model + ("-guidelines" if st.session_state["guideline_for_agent_2"] else "-base")
 
     cursor.execute("""
         INSERT INTO two_agents_human_in_the_loop_evals (
-            user_id, survey_time, agent_1, agent_2,
+            user_id, elapsed_time, agent_1, agent_2,
             conversation_agent_1, conversation_agent_2,
             rating_agent_1, rating_agent_2, better_agent,
             comment, model_type
         ) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
     """, (
         st.session_state.get("user_id", "anonymous"),
-        survey_time,
+        elapsed_time,
         agent_1_model,
         agent_2_model,
         conversation_agent_1,
