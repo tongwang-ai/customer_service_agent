@@ -25,7 +25,7 @@ def gen_agent_response(scenario, model, client, guidelines = None, temperature =
         sys_prompt += my_prompts.AGENT_GUIDELINE_PROMPT1
         last_txt = msg_list[-1]['content']
         last_txt += "\n\n[Guidelines]:" 
-        last_txt += guidelines + "\n Now continue the conversation following the guidlines."
+        last_txt += guidelines + "\n Now continue the conversation following the guidlines. Only output the utterance as an Agent."
         msg_list[-1]['content'] = last_txt
 
     sys_prompt += my_prompts.AIRLINE_POLICY_TICKET
