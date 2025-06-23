@@ -9,7 +9,7 @@ from openai import OpenAI
 from datetime import datetime
 import pickle
 import os
-
+start_time = datetime.now()
 student_model = "meta/llama-2-7b-chat"
 embedding_client = OpenAI(api_key=st.secrets["OPENAI_API_KEY"])
 
@@ -183,7 +183,7 @@ if st.button("Submit Feedback", disabled=not_enough_turns or st.session_state.ge
     cursor = connection.cursor()
     conversation_agent_1 = json.dumps([msg for msg in st.session_state["chat_history_agent_1"] if msg["role"] != "system"])
     conversation_agent_2 = json.dumps([msg for msg in st.session_state["chat_history_agent_2"] if msg["role"] != "system"])
-    survey_time = datetime.now()
+    survey_time = datetime.now() - start_time
     agent_1_model = student_model + ("-guidelines" if st.session_state["guideline_for_agent_1"] else "-base")
     agent_2_model = student_model + ("-guidelines" if st.session_state["guideline_for_agent_2"] else "-base")
 
