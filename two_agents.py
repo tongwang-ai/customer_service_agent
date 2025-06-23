@@ -179,7 +179,7 @@ with col1:
 
 with col2:
     st.write("**Chat with Agent 2**")
-    for msg in st.session_state["chat_history_agent_1"]:
+    for msg in st.session_state["chat_history_agent_2"]:
         if msg["role"] == "user":
             st.markdown(f"**You:** {msg['content']}")
         elif msg["role"] == "assistant":
