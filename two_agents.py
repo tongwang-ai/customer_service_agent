@@ -137,7 +137,7 @@ with col1:
         elif message["role"] == "assistant":
             st.markdown(f"**Agent 1:** {message['content']}")
 
-    st.text_input("Enter your message to Agent 1", key="user_input_agent_1")
+    
 
     # --- BUTTON LOGIC ---
     if st.button("Send to Agent 1"):
@@ -148,7 +148,8 @@ with col1:
             st.session_state["user_input_agent_1"] = ""
             
             st.rerun()
-
+            
+    st.text_input("Enter your message to Agent 1", key="user_input_agent_1")
     # After rerun, if a user message was just appended but no agent response yet, generate it:
     send_message("agent_1", "chat_history_agent_1", "user_input_agent_1", st.session_state["guideline_for_agent_1"])
 
@@ -163,7 +164,7 @@ with col2:
         elif message["role"] == "assistant":
             st.markdown(f"**Agent 2:** {message['content']}")
 
-    st.text_input("Enter your message to Agent 2", key="user_input_agent_2")
+    
 
     # --- BUTTON LOGIC ---
     if st.button("Send to Agent 2"):
@@ -174,6 +175,7 @@ with col2:
             st.session_state["await_agent_response_agent_2"] = True
             st.rerun()
 
+    st.text_input("Enter your message to Agent 2", key="user_input_agent_2")
     # After rerun, if a user message was just appended but no agent response yet, generate it:
     send_message("agent_2", "chat_history_agent_2", "user_input_agent_2", st.session_state["guideline_for_agent_2"])
 
