@@ -188,9 +188,10 @@ with col1:
         user_message = st.session_state["user_input_agent_1"]
         if user_message:
             st.session_state["chat_history_agent_1"].append({"role": "user", "content": user_message})
+            st.session_state["await_agent_response_agent_1"] = True
             st.session_state["user_input_agent_1"] = ""
             # st.session_state["clear_input_agent_1"] = False
-            st.session_state["await_agent_response_agent_1"] = True
+            
             st.rerun()
 
     # After rerun, if a user message was just appended but no agent response yet, generate it:
