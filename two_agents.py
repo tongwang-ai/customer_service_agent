@@ -254,7 +254,7 @@ if st.button("Submit Feedback", disabled=not_enough_turns or st.session_state.ge
             user_id, survey_time, agent_1, agent_2,
             conversation_agent_1, conversation_agent_2,
             rating_agent_1, rating_agent_2, better_agent,
-            comments, model_type
+            comment, model_type
         ) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
     """, (
         st.session_state.get("user_id", "anonymous"),
