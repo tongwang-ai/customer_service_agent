@@ -39,8 +39,8 @@ if st.session_state.get("reset_now", False):
         ]
         # st.session_state["user_input_agent_1"] = ""
         # st.session_state["user_input_agent_2"] = ""
-        st.session_state["clear_input_agent_1"] = False
-        st.session_state["clear_input_agent_2"] = False
+        # st.session_state["clear_input_agent_1"] = False
+        # st.session_state["clear_input_agent_2"] = False
         st.session_state["rating_agent_1"] = 1
         st.session_state["rating_agent_2"] = 1
         st.session_state["comments"] = ""
@@ -74,8 +74,8 @@ for key, default in {
     ],
     "user_input_agent_1": "",
     "user_input_agent_2": "",
-    "clear_input_agent_1": False,
-    "clear_input_agent_2": False,
+    # "clear_input_agent_1": False,
+    # "clear_input_agent_2": False,
 }.items():
     if key not in st.session_state:
         st.session_state[key] = default
