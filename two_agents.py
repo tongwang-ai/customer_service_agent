@@ -242,16 +242,17 @@ if st.button("Submit Feedback", disabled=st.session_state.get("form_submitted", 
     """, (
         st.session_state.get("user_id", "anonymous"),
         survey_time,
-        "llama-2-7b-chat",  # model for both
-        "llama-2-7b-chat",
+        agent_1_model,  # <---- changed here
+        agent_2_model,  # <---- changed here
         conversation_agent_1,
         conversation_agent_2,
         st.session_state["rating_agent_1"],
         st.session_state["rating_agent_2"],
         better_agent,
         st.session_state["comments"],
-        "base_student_model"
+        "base_student_model"  # Or whatever you want for model_type
     ))
+
     connection.commit()
     cursor.close()
     connection.close()
