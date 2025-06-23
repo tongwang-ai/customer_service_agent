@@ -142,21 +142,23 @@ with col1:
     # --- BUTTON LOGIC ---
     st.text_input("Enter your message to Agent 1", key="user_input_agent_1")
     
-    # Agent 1 Input (inside col1 block):
+    # Agent 1 input (inside col1)
     
-    st.text_input(
-        "Enter your message to Agent 1",
-        key="user_input_agent_1",
-        on_change=lambda: None  # A dummy on_change to safely allow clearing later
-    )
+    # ✅ Always define this exactly once
+    user_message_agent_1 = st.text_input("Enter your message to Agent 1", key="user_input_agent_1")
     
+    # ✅ Button to send message
     if st.button("Send to Agent 1", key="send_btn_agent_1"):
-        user_message = st.session_state["user_input_agent_1"]
-        if user_message:
-            st.session_state["chat_history_agent_1"].append({"role": "user", "content": user_message})
+        if user_message_agent_1:
+            st.session_state["chat_history_agent_1"].append({"role": "user", "content": user_message_agent_1})
             st.session_state["await_agent_response_agent_1"] = True
-            st.session_state["user_input_agent_1"] = ""  # Now safe because of on_change binding
+    
+            # 🔥 Do NOT manually reset st.session_state["user_input_agent_1"]
+            # That is what causes the StreamlitDuplicateElementKey error.
+    
+            st.experimental_set_query_params(clear="1")  # Optional browser-triggered rerun param
             st.rerun()
+
 
 
     # After rerun, if a user message was just appended but no agent response yet, generate it:
