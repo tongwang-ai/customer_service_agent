@@ -60,6 +60,12 @@ openai.api_key = st.secrets["OPENAI_API_KEY"]
 st.set_page_config(page_title="LLM Chat Interface", layout="wide")
 st.title("Live Chat with Two Customer Service Agents")
 
+# --- ASYNC guideline retrieval wrapper
+def get_best_guideline(conv_txt, embedding_client, scenario_embeds, guidelines):
+    conv_embed = get_embedding_sync(conv_txt, embedding_client)
+    closest_idx, _ = find_k_closest_embedding(conv_embed, scenario_embeds)
+    return guidelines[closest_idx]
+
 # --- UI layout ---
 col1, _, col2 = st.columns([1, 0.1, 1])
 
