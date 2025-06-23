@@ -250,7 +250,7 @@ if st.button("Submit Feedback", disabled=st.session_state.get("form_submitted", 
         st.session_state["rating_agent_2"],
         better_agent,
         st.session_state["comments"],
-        "base_student_model"  # Or whatever you want for model_type
+        student_model  # Or whatever you want for model_type
     ))
 
     connection.commit()
