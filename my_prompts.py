@@ -80,7 +80,7 @@ Your objective is to handle this situation with professionalism, aiming to maint
 Comply with the airline's policy.  Note: do not ask the customer to wait, hold, or come back later.
 """
 
-AGENT_GUIDELINE_PROMPT1 = """When generating the response to the customer, follow all instructions found in the [Guidelines] section appended to the customer’s message.\n"""
+AGENT_GUIDELINE_PROMPT1 = """When generating the response to the customer, follow instructions found in the [Guidelines] section appended to the customer’s message.\n"""
 
 
 
