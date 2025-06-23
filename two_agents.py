@@ -1,4 +1,3 @@
-this is the code:
 import streamlit as st
 import openai
 import my_prompts
