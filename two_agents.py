@@ -100,8 +100,8 @@ st.markdown(
         - Use persuasive and realistic arguments to achieve your goal.<br>
         - Try to have at least 4 rounds of back-and-forth dialogue with each agent.<br>
         - If the conversation requires details not included in the instructions, use your best judgment to provide reasonable and realistic information.<br><br>
-        <span style="color: red; font-weight: bold;">
-            Note: It takes up to 1 minute for the agent to respond. Please be patient and do not refresh the page while waiting for a response.
+        <span style="color: red; font-weight: bold;font-size: 20px;">
+            Note: It takes up to 1 minute for the agent to respond. Please wait patiently and DO NOT keep sending messages while waiting for a response.
         </span>
         </p>
     </div>
