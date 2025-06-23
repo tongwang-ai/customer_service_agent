@@ -219,7 +219,18 @@ st.text_area("Your comments:", key="comments", value=st.session_state.get("comme
 
 better_agent = st.radio("Which agent do you think performed better?", ("Agent 1", "Agent 2"))
 
-if st.button("Submit Feedback", disabled=st.session_state.get("form_submitted", False)):
+# --- Turn count logic START ---
+# Exclude 'system' messages when counting turns
+agent_1_turns = len([msg for msg in st.session_state["chat_history_agent_1"] if msg["role"] != "system"])
+agent_2_turns = len([msg for msg in st.session_state["chat_history_agent_2"] if msg["role"] != "system"])
+min_turns_required = 5
+not_enough_turns = agent_1_turns < min_turns_required or agent_2_turns < min_turns_required
+
+if not_enough_turns:
+    st.warning("Please continue the conversation with both agents until each has at least 5 turns before submitting feedback.")
+# --- Turn count logic END ---
+
+if st.button("Submit Feedback", disabled=not_enough_turns or st.session_state.get("form_submitted", False)):
     st.session_state["form_submitted"] = True
     connection = create_connection()
     cursor = connection.cursor()
@@ -232,6 +243,9 @@ if st.button("Submit Feedback", disabled=st.session_state.get("form_submitted", 
     conversation_agent_1 = json.dumps(filtered_conversation_agent_1)
     conversation_agent_2 = json.dumps(filtered_conversation_agent_2)
     survey_time = datetime.now()
+    # Assign the model names based on guideline usage (as discussed before)
+    agent_1_model = student_model + ("-guidelines" if st.session_state["guideline_for_agent_1"] else "-base")
+    agent_2_model = student_model + ("-guidelines" if st.session_state["guideline_for_agent_2"] else "-base")
     cursor.execute("""
         INSERT INTO two_agents_human_in_the_loop_evals (
             user_id, survey_time, agent_1, agent_2,
@@ -242,15 +256,15 @@ if st.button("Submit Feedback", disabled=st.session_state.get("form_submitted", 
     """, (
         st.session_state.get("user_id", "anonymous"),
         survey_time,
-        'with guidelines' if st.session_state["guideline_for_agent_1"] else 'no guidelines',  # <---- changed here
-        'with guidelines' if st.session_state["guideline_for_agent_2"] else 'no guidelines',  # <---- changed here
+        agent_1_model,
+        agent_2_model,
         conversation_agent_1,
         conversation_agent_2,
         st.session_state["rating_agent_1"],
         st.session_state["rating_agent_2"],
         better_agent,
         st.session_state["comments"],
-        student_model  # Or whatever you want for model_type
+        student_model
     ))
 
     connection.commit()
