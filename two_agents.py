@@ -142,8 +142,10 @@ with col1:
     if "just_sent_agent_1" not in st.session_state:
         st.session_state["just_sent_agent_1"] = False
 
-    user_message_agent_1 = st.text_input(
-        "Enter your message to Agent 1", key="user_input_agent_1"
+    input_box = st.empty()
+    user_message_agent_1 = input_box.text_input(
+        "Enter your message to Agent 1",
+        key="user_input_agent_1"
     )
 
     if st.button("Send to Agent 1", key="send_btn_agent_1"):
@@ -153,8 +155,14 @@ with col1:
             })
             st.session_state["await_agent_response_agent_1"] = True
             st.session_state["just_sent_agent_1"] = True
+            st.session_state["clear_input_agent_1"] = True  # trigger box clearing
             st.rerun()
 
+    # Clear input box on rerun if needed
+    if st.session_state.get("clear_input_agent_1"):
+        input_box.text_input("Enter your message to Agent 1", value="", key="user_input_agent_1_clear")
+        st.session_state["clear_input_agent_1"] = False
+        
     # LLM response handling
     if st.session_state["await_agent_response_agent_1"]:
         send_message(
