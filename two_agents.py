@@ -186,7 +186,7 @@ with col2:
             st.markdown(f"**Agent 2:** {msg['content']}")
 
     if "await_agent_response_agent_2" not in st.session_state:
-        st.session_state["await_agent_response_agent_1"] = False
+        st.session_state["await_agent_response_agent_2"] = False
     if "just_sent_agent_2" not in st.session_state:
         st.session_state["just_sent_agent_2"] = False
 
@@ -195,7 +195,7 @@ with col2:
     )
 
     if st.button("Send to Agent 2", key="send_btn_agent_2"):
-        if user_message_agent_1:
+        if user_message_agent_2:
             st.session_state["chat_history_agent_2"].append({
                 "role": "user", "content": user_message_agent_2
             })
@@ -220,7 +220,7 @@ with col2:
 
     st.slider(
         "Rate Agent 2 - 1 means very dissatisfied and 5 means very satisfied",
-        1, 5, value=1, key="rating_agent_1"
+        1, 5, value=1, key="rating_agent_2"
     )
 
 
