@@ -242,8 +242,8 @@ if st.button("Submit Feedback", disabled=st.session_state.get("form_submitted", 
     """, (
         st.session_state.get("user_id", "anonymous"),
         survey_time,
-        agent_1_model,  # <---- changed here
-        agent_2_model,  # <---- changed here
+        'with guidelines' if st.session_state["guideline_for_agent_1"] else 'no guidelines',  # <---- changed here
+        'with guidelines' if st.session_state["guideline_for_agent_2"] else 'no guidelines',  # <---- changed here
         conversation_agent_1,
         conversation_agent_2,
         st.session_state["rating_agent_1"],
