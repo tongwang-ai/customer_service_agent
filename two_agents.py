@@ -131,35 +131,50 @@ col1, _, col2 = st.columns([1, 0.1, 1])
 
 with col1:
     st.write("**Chat with Agent 1**")
-    for message in st.session_state["chat_history_agent_1"]:
-        if message["role"] == "user":
-            st.markdown(f"**You:** {message['content']}")
-        elif message["role"] == "assistant":
-            st.markdown(f"**Agent 1:** {message['content']}")
+    for msg in st.session_state["chat_history_agent_1"]:
+        if msg["role"] == "user":
+            st.markdown(f"**You:** {msg['content']}")
+        else:
+            st.markdown(f"**Agent 1:** {msg['content']}")
 
-    
+    if "await_agent_response_agent_1" not in st.session_state:
+        st.session_state["await_agent_response_agent_1"] = False
+    if "just_sent_agent_1" not in st.session_state:
+        st.session_state["just_sent_agent_1"] = False
 
-    # --- BUTTON LOGIC ---
-    user_message_agent_1 = st.text_input("Enter your message to Agent 1", key="user_input_agent_1")
-    
-    # ✅ Button to send message
+    user_message_agent_1 = st.text_input(
+        "Enter your message to Agent 1", key="user_input_agent_1"
+    )
+
     if st.button("Send to Agent 1", key="send_btn_agent_1"):
         if user_message_agent_1:
-            st.session_state["chat_history_agent_1"].append({"role": "user", "content": user_message_agent_1})
+            st.session_state["chat_history_agent_1"].append({
+                "role": "user", "content": user_message_agent_1
+            })
             st.session_state["await_agent_response_agent_1"] = True
-    
-            # 🔥 Do NOT manually reset st.session_state["user_input_agent_1"]
-            # That is what causes the StreamlitDuplicateElementKey error.
-    
-            st.experimental_set_query_params(clear="1")  # Optional browser-triggered rerun param
+            st.session_state["just_sent_agent_1"] = True
             st.rerun()
 
+    # LLM response handling
+    if st.session_state["await_agent_response_agent_1"]:
+        send_message(
+            "agent_1", 
+            "chat_history_agent_1", 
+            "user_input_agent_1", 
+            st.session_state["guideline_for_agent_1"]
+        )
+        st.session_state["await_agent_response_agent_1"] = False
 
+        # Only rerun once to display the agent response
+        if st.session_state["just_sent_agent_1"]:
+            st.session_state["just_sent_agent_1"] = False
+            st.rerun()
 
-    # After rerun, if a user message was just appended but no agent response yet, generate it:
-    send_message("agent_1", "chat_history_agent_1", "user_input_agent_1", st.session_state["guideline_for_agent_1"])
+    st.slider(
+        "Rate Agent 1 - 1 means very dissatisfied and 5 means very satisfied",
+        1, 5, value=1, key="rating_agent_1"
+    )
 
-    st.slider("Rate Agent 1 - 1 means very dissatisfied and 5 means very satisfied", 1, 5, value=1, key="rating_agent_1")
 
 
 with col2:
