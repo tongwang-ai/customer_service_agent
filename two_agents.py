@@ -25,7 +25,7 @@ guidelines = library['guidelines']
 openai.api_key = st.secrets["OPENAI_API_KEY"]
 
 st.set_page_config(page_title="LLM Chat Interface", layout="wide")
-
+input_placeholder = st.empty()  # create a container
 # === Safe reset trigger ===
 if st.session_state.get("reset_now", False):
     def reset_form():
@@ -149,7 +149,9 @@ with col1:
             st.session_state["await_agent_response_agent_1"] = True
             st.session_state["user_input_agent_1"] = ""
             st.rerun()
-
+            
+    with input_placeholder:
+        st.text_input("Enter your message to Agent 1", key="user_input_agent_1")
     # After rerun, if a user message was just appended but no agent response yet, generate it:
     send_message("agent_1", "chat_history_agent_1", "user_input_agent_1", st.session_state["guideline_for_agent_1"])
 
