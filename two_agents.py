@@ -229,7 +229,7 @@ min_turns_required = 4
 not_enough_turns = agent_1_turns < min_turns_required or agent_2_turns < min_turns_required
 
 if not_enough_turns:
-    st.warning("Please continue the conversation with both agents until each has at least 5 turns before submitting feedback.")
+    st.warning("Please continue the conversation with both agents until each has at least 4 turns before submitting feedback.")
 # --- Turn count logic END ---
 
 if st.button("Submit Feedback", disabled=not_enough_turns or st.session_state.get("form_submitted", False)):
