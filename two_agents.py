@@ -213,7 +213,7 @@ with col1:
 #         st.rerun()
 
 #     st.slider("Rate Agent 2 - 1 means very dissatisfied and 5 means very satisfied", 1, 5, value=1, key="rating_agent_2")
-with col1:
+with col2:
     st.write("**Chat with Agent 2**")
     for message in st.session_state["chat_history_agent_2"]:
         if message["role"] == "user":
