@@ -293,8 +293,7 @@ if st.button("Submit Feedback", disabled=not_enough_turns or st.session_state.ge
     connection.commit()
     cursor.close()
     connection.close()
-    st.success("Thank you for your feedback!")
+    st.success("Your response has been recorded. Thank you for your participation. The completion code is: 06520.")
     st.session_state["reset_now"] = True
     st.rerun()
-if st.session_state.get("form_submitted", False):
-    st.success("Your response has been recorded. Thank you for your participation. The completion code is: 06520. ")
+
