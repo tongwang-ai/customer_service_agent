@@ -163,10 +163,12 @@ with col2:
 
     st.slider("Rate Agent 2 - 1 means very dissatisfied and 5 means very satisfied", 1, 5, value=1, key="rating_agent_2")
 
-st.subheader("Comments about the Agents")
+better_agent = st.radio("Which agent do you think performed better?", ("Agent 1", "Agent 2"))
+
+st.subheader("Briefly explain your ratings and choice above")
 st.text_area("Your comments:", key="comments", value=st.session_state.get("comments", ""))
 
-better_agent = st.radio("Which agent do you think performed better?", ("Agent 1", "Agent 2"))
+
 
 # Count agent responses
 agent_1_turns = len([msg for msg in st.session_state["chat_history_agent_1"] if msg["role"] == "user"])
