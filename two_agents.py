@@ -140,16 +140,15 @@ with col1:
     
 
     # --- BUTTON LOGIC ---
+    st.text_input("Enter your message to Agent 1", key="user_input_agent_1")
+    
     if st.button("Send to Agent 1"):
         user_message = st.session_state["user_input_agent_1"]
         if user_message:
             st.session_state["chat_history_agent_1"].append({"role": "user", "content": user_message})
             st.session_state["await_agent_response_agent_1"] = True
-            st.session_state["user_input_agent_1"] = ""
-            
             st.rerun()
-            
-    st.text_input("Enter your message to Agent 1", key="user_input_agent_1")
+
     # After rerun, if a user message was just appended but no agent response yet, generate it:
     send_message("agent_1", "chat_history_agent_1", "user_input_agent_1", st.session_state["guideline_for_agent_1"])
 
@@ -167,15 +166,14 @@ with col2:
     
 
     # --- BUTTON LOGIC ---
+    st.text_input("Enter your message to Agent 2", key="user_input_agent_2")
+    
     if st.button("Send to Agent 2"):
         user_message = st.session_state["user_input_agent_2"]
         if user_message:
             st.session_state["chat_history_agent_2"].append({"role": "user", "content": user_message})
-            st.session_state["user_input_agent_2"] = ""
             st.session_state["await_agent_response_agent_2"] = True
             st.rerun()
-
-    st.text_input("Enter your message to Agent 2", key="user_input_agent_2")
     # After rerun, if a user message was just appended but no agent response yet, generate it:
     send_message("agent_2", "chat_history_agent_2", "user_input_agent_2", st.session_state["guideline_for_agent_2"])
 
