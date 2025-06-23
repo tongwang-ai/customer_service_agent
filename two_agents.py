@@ -131,23 +131,31 @@ col1, _, col2 = st.columns([1, 0.1, 1])
 
 with col1:
     st.write("**Chat with Agent 1**")
-    for message in st.session_state["chat_history_agent_1"]:
-        if message["role"] == "user":
-            st.markdown(f"**You:** {message['content']}")
-        elif message["role"] == "assistant":
-            st.markdown(f"**Agent 1:** {message['content']}")
+    for msg in st.session_state["chat_history_agent_1"]:
+        content = msg["content"]
+        prefix = "**You:**" if msg["role"] == "user" else "**Agent 1:**"
+        st.markdown(f"{prefix} {content}")
 
-    # Step 1: Define placeholder
+    # Ensure flags exist
+    st.session_state.setdefault("await_agent_response_agent_1", False)
+    st.session_state.setdefault("clear_input_agent_1", False)
+
+    # Use placeholder to control input rendering
     input_placeholder = st.empty()
-
-    # Step 2: Render input field with conditional clearing
-    if st.session_state.get("clear_input_agent_1", False):
-        user_message = input_placeholder.text_input("Enter your message to Agent 1", value="", key="temp_input_agent_1")
+    if st.session_state["clear_input_agent_1"]:
+        user_message = input_placeholder.text_input(
+            "Enter your message to Agent 1",
+            value="",
+            key="temp_input_agent_1"
+        )
         st.session_state["clear_input_agent_1"] = False
     else:
-        user_message = input_placeholder.text_input("Enter your message to Agent 1", key="user_input_agent_1")
+        user_message = input_placeholder.text_input(
+            "Enter your message to Agent 1",
+            key="user_input_agent_1"
+        )
 
-    # Step 3: Send message logic
+    # Button logic
     if st.button("Send to Agent 1", key="send_btn_agent_1"):
         if user_message:
             st.session_state["chat_history_agent_1"].append({"role": "user", "content": user_message})
@@ -155,10 +163,15 @@ with col1:
             st.session_state["clear_input_agent_1"] = True
             st.rerun()
 
-    # Step 4: Generate agent response after rerun
-    send_message("agent_1", "chat_history_agent_1", "user_input_agent_1", st.session_state["guideline_for_agent_1"])
+    # Agent response handling
+    if st.session_state["await_agent_response_agent_1"]:
+        send_message("agent_1", "chat_history_agent_1", "user_input_agent_1", st.session_state["guideline_for_agent_1"])
+        st.session_state["await_agent_response_agent_1"] = False
+        st.rerun()  # triggers UI to refresh with agent's response
 
-    st.slider("Rate Agent 1 - 1 means very dissatisfied and 5 means very satisfied", 1, 5, value=1, key="rating_agent_1")
+    # Rating slider
+    st.slider("Rate Agent 1 …", 1, 5, value=1, key="rating_agent_1")
+
 
 
 
