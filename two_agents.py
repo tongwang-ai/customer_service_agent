@@ -164,8 +164,8 @@ st.text_area("Your comments:", key="comments", value=st.session_state.get("comme
 better_agent = st.radio("Which agent do you think performed better?", ("Agent 1", "Agent 2"))
 
 # Count agent responses
-agent_1_turns = len([msg for msg in st.session_state["chat_history_agent_1"] if msg["role"] != "user"])
-agent_2_turns = len([msg for msg in st.session_state["chat_history_agent_2"] if msg["role"] != "user"])
+agent_1_turns = len([msg for msg in st.session_state["chat_history_agent_1"] if msg["role"] == "user"])
+agent_2_turns = len([msg for msg in st.session_state["chat_history_agent_2"] if msg["role"] == "user"])
 num_turns = 1
 not_enough_turns = agent_1_turns < num_turns or agent_2_turns < num_turns
 
