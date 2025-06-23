@@ -132,9 +132,10 @@ col1, _, col2 = st.columns([1, 0.1, 1])
 with col1:
     st.write("**Chat with Agent 1**")
     for msg in st.session_state["chat_history_agent_1"]:
-        content = msg["content"]
-        prefix = "**You:**" if msg["role"] == "user" else "**Agent 1:**"
-        st.markdown(f"{prefix} {content}")
+        if msg["role"] == "user":
+            st.markdown(f"**You:** {msg['content']}")
+        elif msg["role"] == "assistant":
+            st.markdown(f"**Agent 1:** {msg['content']}")
 
     # Ensure flags exist
     st.session_state.setdefault("await_agent_response_agent_1", False)
