@@ -142,16 +142,22 @@ with col1:
     # --- BUTTON LOGIC ---
     st.text_input("Enter your message to Agent 1", key="user_input_agent_1")
     
-    # Text input
-    user_input = st.text_input("Enter your message to Agent 1", key="user_input_agent_1")
+    # Agent 1 Input (inside col1 block):
     
-    # Button and logic
+    st.text_input(
+        "Enter your message to Agent 1",
+        key="user_input_agent_1",
+        on_change=lambda: None  # A dummy on_change to safely allow clearing later
+    )
+    
     if st.button("Send to Agent 1", key="send_btn_agent_1"):
-        if user_input:
-            st.session_state["chat_history_agent_1"].append({"role": "user", "content": user_input})
+        user_message = st.session_state["user_input_agent_1"]
+        if user_message:
+            st.session_state["chat_history_agent_1"].append({"role": "user", "content": user_message})
             st.session_state["await_agent_response_agent_1"] = True
-            st.session_state["user_input_agent_1"] = ""  # <-- this is safe now
+            st.session_state["user_input_agent_1"] = ""  # Now safe because of on_change binding
             st.rerun()
+
 
     # After rerun, if a user message was just appended but no agent response yet, generate it:
     send_message("agent_1", "chat_history_agent_1", "user_input_agent_1", st.session_state["guideline_for_agent_1"])
