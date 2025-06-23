@@ -37,10 +37,6 @@ if st.session_state.get("reset_now", False):
             {"role": "system", "content": my_prompts.AGENT_PROMPT_TICKET},
             {"role": "assistant", "content": "Hello, this is Agent 2, how can I help you?"}
         ]
-        # st.session_state["user_input_agent_1"] = ""
-        # st.session_state["user_input_agent_2"] = ""
-        # st.session_state["clear_input_agent_1"] = False
-        # st.session_state["clear_input_agent_2"] = False
         st.session_state["rating_agent_1"] = 1
         st.session_state["rating_agent_2"] = 1
         st.session_state["comments"] = ""
@@ -114,21 +110,6 @@ def get_best_guideline(conv_txt, embedding_client, scenario_embeds, guidelines):
     closest_idx, _ = find_k_closest_embedding(conv_embed, scenario_embeds)
     return guidelines[closest_idx]
 
-# def send_message(agent, chat_history_key, input_key, use_guideline):
-#     user_message = st.session_state[input_key]
-#     if user_message:
-#         st.session_state[chat_history_key].append({"role": "user", "content": user_message})
-#         conversation = [m for m in st.session_state[chat_history_key] if m["role"] != "system"]
-#         conv_txt = ""
-#         for m in conversation:
-#             if m["role"] == "assistant":
-#                 conv_txt += "\n\nAgent: " + m["content"]
-#             elif m["role"] == "user":
-#                 conv_txt += "\n\nCustomer: " + m["content"]
-#         conv_txt = conv_txt.strip()
-#         best_guideline = get_best_guideline(conv_txt, embedding_client, scenario_embeds, guidelines) if use_guideline else None
-#         llm_response = gen_agent_response(conv_txt, student_model, client=None, guidelines=best_guideline, temperature=0.3)
-#         st.session_state[chat_history_key].append({"role": "assistant", "content": llm_response})
 def send_message(agent, chat_history_key, input_key, use_guideline):
     # Only handle agent response if 'await_agent_response' flag is set
     if st.session_state.get(f"await_agent_response_{agent}", False):
@@ -149,26 +130,6 @@ def send_message(agent, chat_history_key, input_key, use_guideline):
 
 col1, _, col2 = st.columns([1, 0.1, 1])
 
-# with col1:
-#     st.write("**Chat with Agent 1**")
-#     for message in st.session_state["chat_history_agent_1"]:
-#         if message["role"] == "user":
-#             st.markdown(f"**You:** {message['content']}")
-#         elif message["role"] == "assistant":
-#             st.markdown(f"**Agent 1:** {message['content']}")
-
-
-#     if st.session_state["clear_input_agent_1"]:
-#         st.session_state["user_input_agent_1"] = ""
-#         st.session_state["clear_input_agent_1"] = False
-
-#     st.text_input("Enter your message to Agent 1", key="user_input_agent_1")
-#     if st.button("Send to Agent 1"):
-#         send_message("agent_1", "chat_history_agent_1", "user_input_agent_1", st.session_state["guideline_for_agent_1"])
-#         st.session_state["clear_input_agent_1"] = True
-#         st.rerun()
-
-#     st.slider("Rate Agent 1 - 1 means very dissatisfied and 5 means very satisfied", 1, 5, value=1, key="rating_agent_1")
 with col1:
     st.write("**Chat with Agent 1**")
     for message in st.session_state["chat_history_agent_1"]:
@@ -200,25 +161,6 @@ with col1:
     st.slider("Rate Agent 1 - 1 means very dissatisfied and 5 means very satisfied", 1, 5, value=1, key="rating_agent_1")
 
 
-# with col2:
-#     st.write("**Chat with Agent 2**")
-#     for message in st.session_state["chat_history_agent_2"]:
-#         if message["role"] == "user":
-#             st.markdown(f"**You:** {message['content']}")
-#         elif message["role"] == "assistant":
-#             st.markdown(f"**Agent 2:** {message['content']}")
-
-#     if st.session_state["clear_input_agent_2"]:
-#         st.session_state["user_input_agent_2"] = ""
-#         st.session_state["clear_input_agent_2"] = False
-
-#     st.text_input("Enter your message to Agent 2", key="user_input_agent_2")
-#     if st.button("Send to Agent 2"):
-#         send_message("agent_2", "chat_history_agent_2", "user_input_agent_2", st.session_state["guideline_for_agent_2"])
-#         st.session_state["clear_input_agent_2"] = True
-#         st.rerun()
-
-#     st.slider("Rate Agent 2 - 1 means very dissatisfied and 5 means very satisfied", 1, 5, value=1, key="rating_agent_2")
 with col2:
     st.write("**Chat with Agent 2**")
     for message in st.session_state["chat_history_agent_2"]:
