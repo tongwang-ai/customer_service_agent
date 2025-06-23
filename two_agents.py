@@ -51,6 +51,11 @@ if st.session_state.get("reset_now", False):
     st.rerun()
 
 st.title("Live Chat with Two Customer Service Agents")
+if "show_thank_you" not in st.session_state:
+    st.session_state["show_thank_you"] = False
+if st.session_state.get("show_thank_you", False):
+    st.success("Your response has been recorded. Thank you for your participation. The completion code is: 06520.")
+    st.stop()
 
 # Initial session setup
 if "guideline_for_agent_1" not in st.session_state:
@@ -293,7 +298,8 @@ if st.button("Submit Feedback", disabled=not_enough_turns or st.session_state.ge
     connection.commit()
     cursor.close()
     connection.close()
-    st.success("Your response has been recorded. Thank you for your participation. The completion code is: 06520.")
-    st.session_state["reset_now"] = True
-    st.rerun()
+    st.session_state["show_thank_you"] = True   # <--- ADD THIS
+    # st.success("Your response has been recorded. Thank you for your participation. The completion code is: 06520.")
+    # st.session_state["reset_now"] = True
+    # st.rerun()
 
