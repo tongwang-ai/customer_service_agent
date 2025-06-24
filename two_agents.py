@@ -18,9 +18,13 @@ start_time = st.session_state["start_time"]
 student_model = "meta/llama-2-7b-chat"
 embedding_client = OpenAI(api_key=st.secrets["OPENAI_API_KEY"])
 
-library = pickle.load(open('llama-2-7b-chat-library.pkl', 'rb'))
-scenario_embeds = library['scenario_embedding']
-guidelines = library['guidelines']
+librar_augmented = pickle.load(open('llama-2-7b-chat-library-augmented.pkl', 'rb'))
+scenario_embeds_augmented = library_augmented['scenario_embedding']
+guidelines_augmented = library_augmented['guidelines']
+
+library_simulated = pickle.load(open('llama-2-7b-chat-library-simulated.pkl', 'rb'))
+scenario_embeds_simulated = library_simulated['scenario_embedding']
+guidelines_simulated = library_simulated['guidelines']
 
 openai.api_key = st.secrets["OPENAI_API_KEY"]
 
@@ -55,9 +59,9 @@ if st.session_state.get("show_thank_you", False):
 
 # Initial session setup
 if "guideline_for_agent_1" not in st.session_state:
-    use_guideline_for_agent_1 = random.choice([True, False])
-    st.session_state["guideline_for_agent_1"] = use_guideline_for_agent_1
-    st.session_state["guideline_for_agent_2"] = not use_guideline_for_agent_1
+    use_human = random.choice([True, False])
+    st.session_state["guideline_for_agent_1"] = use_human
+    st.session_state["guideline_for_agent_2"] = not use_human
 
 for key, default in {
     "chat_history_agent_1": [
@@ -110,7 +114,7 @@ def get_best_guideline(conv_txt, embedding_client, scenario_embeds, guidelines):
     closest_idx, _ = find_k_closest_embedding(conv_embed, scenario_embeds)
     return guidelines[closest_idx]
 
-def send_message(agent, chat_history_key, input_key, use_guideline):
+def send_message(agent, chat_history_key, input_key, use_human):
     # Only handle agent response if 'await_agent_response' flag is set
     if st.session_state.get(f"await_agent_response_{agent}", False):
         conversation = [m for m in st.session_state[chat_history_key] if m["role"] != "system"]
@@ -121,7 +125,10 @@ def send_message(agent, chat_history_key, input_key, use_guideline):
             elif m["role"] == "user":
                 conv_txt += "\n\nCustomer: " + m["content"]
         conv_txt = conv_txt.strip()
-        best_guideline = get_best_guideline(conv_txt, embedding_client, scenario_embeds, guidelines) if use_guideline else None
+        if use_human:
+            best_guideline = get_best_guideline(conv_txt, embedding_client, scenario_embeds_augmented, guidelines_augmented)
+        else:
+            best_guideline = get_best_guideline(conv_txt, embedding_client, scenario_embeds_simulated, guidelines_simulated)
         llm_response = gen_agent_response(conv_txt, student_model, client=None, guidelines=best_guideline, temperature=0.3)
         st.session_state[chat_history_key].append({"role": "assistant", "content": llm_response})
         st.session_state[f"await_agent_response_{agent}"] = False
@@ -245,8 +252,8 @@ if st.button("Submit Feedback", disabled=not_enough_turns or st.session_state.ge
     conversation_agent_1 = json.dumps([msg for msg in st.session_state["chat_history_agent_1"] if msg["role"] != "system"])
     conversation_agent_2 = json.dumps([msg for msg in st.session_state["chat_history_agent_2"] if msg["role"] != "system"])
     elapsed_time = datetime.now() - start_time
-    agent_1_model = student_model + ("-guidelines" if st.session_state["guideline_for_agent_1"] else "-base")
-    agent_2_model = student_model + ("-guidelines" if st.session_state["guideline_for_agent_2"] else "-base")
+    agent_1_model = student_model + ("-augmented" if st.session_state["guideline_for_agent_1"] else "-simulated")
+    agent_2_model = student_model + ("-augmented" if st.session_state["guideline_for_agent_2"] else "-simulated")
 
     cursor.execute("""
         INSERT INTO two_agents_human_in_the_loop_evals (
