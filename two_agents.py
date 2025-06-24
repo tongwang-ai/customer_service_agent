@@ -18,11 +18,11 @@ start_time = st.session_state["start_time"]
 student_model = "meta/llama-2-7b-chat"
 embedding_client = OpenAI(api_key=st.secrets["OPENAI_API_KEY"])
 
-librar_augmented = pickle.load(open('llama-2-7b-chat-library-augmented.pkl', 'rb'))
+librar_augmented = pickle.load(open('llama-2-7b-chat-library_augmented.pkl', 'rb'))
 scenario_embeds_augmented = library_augmented['scenario_embedding']
 guidelines_augmented = library_augmented['guidelines']
 
-library_simulated = pickle.load(open('llama-2-7b-chat-library-simulated.pkl', 'rb'))
+library_simulated = pickle.load(open('llama-2-7b-chat-library_simulated.pkl', 'rb'))
 scenario_embeds_simulated = library_simulated['scenario_embedding']
 guidelines_simulated = library_simulated['guidelines']
 
