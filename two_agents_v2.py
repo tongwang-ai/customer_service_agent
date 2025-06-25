@@ -17,6 +17,7 @@ start_time = st.session_state["start_time"]
 
 student_model = "gpt-3.5-turbo-0125"
 embedding_client = OpenAI(api_key=st.secrets["OPENAI_API_KEY"])
+client = OpenAI(api_key=st.secrets["OPENAI_API_KEY"])
 
 library_augmented = pickle.load(open('gpt-3.5-turbo-0125-library_augmented.pkl', 'rb'))
 scenario_embeds_augmented = library_augmented['scenario_embedding']
@@ -129,7 +130,7 @@ def send_message(agent, chat_history_key, input_key, use_human):
             best_guideline = get_best_guideline(conv_txt, embedding_client, scenario_embeds_augmented, guidelines_augmented)
         else:
             best_guideline = get_best_guideline(conv_txt, embedding_client, scenario_embeds_simulated, guidelines_simulated)
-        llm_response = gen_agent_response(conv_txt, student_model, client=None, guidelines=best_guideline, temperature=0.3)
+        llm_response = gen_agent_response(conv_txt, student_model, client=client, guidelines=best_guideline, temperature=0.3)
         st.session_state[chat_history_key].append({"role": "assistant", "content": llm_response})
         st.session_state[f"await_agent_response_{agent}"] = False
 
