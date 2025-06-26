@@ -146,7 +146,17 @@ if st.session_state["await_agent_response"]:
     st.rerun()
 
 # Rating slider
-st.slider(f"Rate the agent …", 1, 5, value=1, key="rating_agent")
+st.radio(
+    "How satisfied are you with the agent's service?",
+    [
+        "1: Extremely unsatisfied",
+        "2: Unsatisfied",
+        "3: Neutral",
+        "4: Satisfied",
+        "5: Extremely satisfied"
+    ],
+    key="rating_agent"
+)
 
 # Count agent responses
 agent_turns = len([msg for msg in st.session_state["chat_history_agent"] if msg["role"] == "assistant"])
