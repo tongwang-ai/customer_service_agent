@@ -35,7 +35,7 @@ if st.session_state.get("reset_now", False):
     def reset_form():
         st.session_state["chat_history_agent"] = [
             {"role": "system", "content": my_prompts.AGENT_PROMPT_TICKET},
-            {"role": "assistant", "content": f"Hello, this is {st.session_state['agent_label']}, how can I help you?"}
+            {"role": "assistant", "content": "Hello, this is the Customer Service Agent, how can I help you?"}
         ]
         st.session_state["rating_agent"] = 1
         st.session_state["comments"] = ""
@@ -52,21 +52,17 @@ if st.session_state.get("show_thank_you", False):
     st.success("Your response has been recorded. Thank you for your participation. The completion code is: 06520.")
     st.stop()
 
-# ---- Random agent assignment ----
-if "assigned_agent" not in st.session_state:
-    assigned = random.choice(["agent_1", "agent_2"])
-    st.session_state["assigned_agent"] = assigned
-    st.session_state["agent_label"] = "Agent 1" if assigned == "agent_1" else "Agent 2"
-    st.session_state["guideline_for_agent"] = random.choice([True, False])  # still randomize guideline
+# ---- Randomize guideline type ONCE per session ----
+if "guideline_for_agent" not in st.session_state:
+    st.session_state["guideline_for_agent"] = random.choice([True, False])  # True=augmented, False=simulated
 
-agent_key = st.session_state["assigned_agent"]
-agent_label = st.session_state["agent_label"]
+agent_label = "Customer Service Agent"
 
-# ---- Session state for one agent only ----
+# ---- Session state for single agent ----
 if "chat_history_agent" not in st.session_state:
     st.session_state["chat_history_agent"] = [
         {"role": "system", "content": my_prompts.AGENT_PROMPT_TICKET},
-        {"role": "assistant", "content": f"Hello, this is {agent_label}, how can I help you?"}
+        {"role": "assistant", "content": f"Hello, this is the {agent_label}, how can I help you?"}
     ]
 if "user_input_agent" not in st.session_state:
     st.session_state["user_input_agent"] = ""
@@ -75,14 +71,14 @@ st.markdown(
     """
     <div style="border: 2px solid #B0B0B0; background-color: #f9f9f9; padding: 15px; border-radius: 10px; margin-bottom: 20px;">
         <p style="font-size: 16px; color: #333;">
-        <b>Your task is to interact with your assigned agent to request a full refund for a restricted ticket with confirmation number YAL165.</b><br><br>
+        <b>Your task is to interact with the agent to request a full refund for a restricted ticket with booking reference YAL165.</b><br><br>
         <b>Objective:</b> Negotiate for a refund as you would in a real-life situation.<br><br>
         <b>Guidelines:</b><br>
         - Use persuasive and realistic arguments to achieve your goal.<br>
         - Try to have at least 4 rounds of back-and-forth dialogue.<br>
         - If the conversation requires details not included in the instructions, use your best judgment to provide reasonable and realistic information.<br><br>
         <span style="color: red; font-weight: bold;font-size: 20px;">
-            Note: It takes up to 1 minute for the agent to respond. Please wait patiently and DO NOT keep sending messages while waiting for a response.
+            Note: Once you send a message, it may take a few seconds for the agent to respond. DO NOT keep sending messages or refresh while waiting for a response.
         </span>
         </p>
     </div>
@@ -113,7 +109,7 @@ def send_message(chat_history_key, input_key, use_human):
         st.session_state[chat_history_key].append({"role": "assistant", "content": llm_response})
         st.session_state["await_agent_response"] = False
 
-# --- Chat UI for only the assigned agent ---
+# --- Chat UI for single agent ---
 st.write(f"**Chat with {agent_label}**")
 for msg in st.session_state["chat_history_agent"]:
     if msg["role"] == "user":
@@ -127,18 +123,18 @@ st.session_state.setdefault("clear_input_agent", False)
 input_placeholder = st.empty()
 if st.session_state["clear_input_agent"]:
     user_message = input_placeholder.text_input(
-        f"Enter your message to {agent_label}",
+        f"Enter your message to the agent",
         value="",
         key="temp_input_agent"
     )
     st.session_state["clear_input_agent"] = False
 else:
     user_message = input_placeholder.text_input(
-        f"Enter your message to {agent_label}",
+        f"Enter your message to the agent",
         key="user_input_agent"
     )
 
-if st.button(f"Send to {agent_label}", key="send_btn_agent", disabled=st.session_state.get("await_agent_response", False)):
+if st.button(f"Send to agent", key="send_btn_agent", disabled=st.session_state.get("await_agent_response", False)):
     if user_message:
         st.session_state["chat_history_agent"].append({"role": "user", "content": user_message})
         st.session_state["await_agent_response"] = True
@@ -151,7 +147,7 @@ if st.session_state["await_agent_response"]:
     st.rerun()
 
 # Rating slider
-st.slider(f"Rate {agent_label} …", 1, 5, value=1, key="rating_agent")
+st.slider(f"Rate the agent …", 1, 5, value=1, key="rating_agent")
 
 # Count agent responses
 agent_turns = len([msg for msg in st.session_state["chat_history_agent"] if msg["role"] == "assistant"])
