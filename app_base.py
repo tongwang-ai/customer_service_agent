@@ -35,7 +35,7 @@ if st.session_state.get("reset_now", False):
     def reset_form():
         st.session_state["chat_history_agent"] = [
             {"role": "system", "content": my_prompts.AGENT_PROMPT_TICKET},
-            {"role": "assistant", "content": "Hello, this is the Customer Service Agent, how can I help you?"}
+            {"role": "assistant", "content": "Hello, this is Agent 06520, how can I help you?"}
         ]
         st.session_state["rating_agent"] = 1
         st.session_state["comments"] = ""
@@ -56,7 +56,7 @@ if st.session_state.get("show_thank_you", False):
 if "guideline_for_agent" not in st.session_state:
     st.session_state["guideline_for_agent"] = random.choice([True, False])  # True=augmented, False=simulated
 
-agent_label = "Customer Service Agent"
+agent_label = "Agent"
 
 # ---- Session state for single agent ----
 if "chat_history_agent" not in st.session_state:
