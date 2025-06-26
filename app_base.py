@@ -5,16 +5,165 @@ from my_utils import *
 import psycopg2
 import json
 import random
+from openai import OpenAI
 from datetime import datetime
-import argparse
+import pickle
+import os
 
-# Access the model argument
-student_model = "meta/llama-2-13b-chat"
+if "start_time" not in st.session_state:
+    st.session_state["start_time"] = datetime.now()
+start_time = st.session_state["start_time"]
 
-# Initialize session state for chat histories of both agents
-agent_1_sys_txt = my_prompts.AGENT_PROMPT_TICKET + my_prompts.AIRLINE_POLICY_TICKET
-agent_2_sys_txt = my_prompts.AGENT_PROMPT_TICKET + my_prompts.AIRLINE_POLICY_TICKET
-# Database connection setup
+student_model = "gpt-3.5-turbo-0125"
+embedding_client = OpenAI(api_key=st.secrets["OPENAI_API_KEY"])
+client = OpenAI(api_key=st.secrets["OPENAI_API_KEY"])
+
+library_augmented = pickle.load(open('gpt-3.5-turbo-0125-library_augmented.pkl', 'rb'))
+scenario_embeds_augmented = library_augmented['scenario_embedding']
+guidelines_augmented = library_augmented['guidelines']
+
+library_simulated = pickle.load(open('gpt-3.5-turbo-0125-library_simulated.pkl', 'rb'))
+scenario_embeds_simulated = library_simulated['scenario_embedding']
+guidelines_simulated = library_simulated['guidelines']
+
+openai.api_key = st.secrets["OPENAI_API_KEY"]
+
+st.set_page_config(page_title="LLM Chat Interface", layout="wide")
+input_placeholder = st.empty()  # create a container
+
+if st.session_state.get("reset_now", False):
+    def reset_form():
+        st.session_state["chat_history_agent"] = [
+            {"role": "system", "content": my_prompts.AGENT_PROMPT_TICKET},
+            {"role": "assistant", "content": f"Hello, this is {st.session_state['agent_label']}, how can I help you?"}
+        ]
+        st.session_state["rating_agent"] = 1
+        st.session_state["comments"] = ""
+        st.session_state["form_submitted"] = False
+
+    reset_form()
+    st.session_state["reset_now"] = False
+    st.rerun()
+
+st.title("Live Chat with a Customer Service Agent")
+if "show_thank_you" not in st.session_state:
+    st.session_state["show_thank_you"] = False
+if st.session_state.get("show_thank_you", False):
+    st.success("Your response has been recorded. Thank you for your participation. The completion code is: 06520.")
+    st.stop()
+
+# ---- Random agent assignment ----
+if "assigned_agent" not in st.session_state:
+    assigned = random.choice(["agent_1", "agent_2"])
+    st.session_state["assigned_agent"] = assigned
+    st.session_state["agent_label"] = "Agent 1" if assigned == "agent_1" else "Agent 2"
+    st.session_state["guideline_for_agent"] = random.choice([True, False])  # still randomize guideline
+
+agent_key = st.session_state["assigned_agent"]
+agent_label = st.session_state["agent_label"]
+
+# ---- Session state for one agent only ----
+if "chat_history_agent" not in st.session_state:
+    st.session_state["chat_history_agent"] = [
+        {"role": "system", "content": my_prompts.AGENT_PROMPT_TICKET},
+        {"role": "assistant", "content": f"Hello, this is {agent_label}, how can I help you?"}
+    ]
+if "user_input_agent" not in st.session_state:
+    st.session_state["user_input_agent"] = ""
+
+st.markdown(
+    """
+    <div style="border: 2px solid #B0B0B0; background-color: #f9f9f9; padding: 15px; border-radius: 10px; margin-bottom: 20px;">
+        <p style="font-size: 16px; color: #333;">
+        <b>Your task is to interact with your assigned agent to request a full refund for a restricted ticket with confirmation number YAL165.</b><br><br>
+        <b>Objective:</b> Negotiate for a refund as you would in a real-life situation.<br><br>
+        <b>Guidelines:</b><br>
+        - Use persuasive and realistic arguments to achieve your goal.<br>
+        - Try to have at least 4 rounds of back-and-forth dialogue.<br>
+        - If the conversation requires details not included in the instructions, use your best judgment to provide reasonable and realistic information.<br><br>
+        <span style="color: red; font-weight: bold;font-size: 20px;">
+            Note: It takes up to 1 minute for the agent to respond. Please wait patiently and DO NOT keep sending messages while waiting for a response.
+        </span>
+        </p>
+    </div>
+    """,
+    unsafe_allow_html=True
+)
+
+def get_best_guideline(conv_txt, embedding_client, scenario_embeds, guidelines):
+    conv_embed = get_embedding_sync(conv_txt, embedding_client)
+    closest_idx, _ = find_k_closest_embedding(conv_embed, scenario_embeds)
+    return guidelines[closest_idx]
+
+def send_message(chat_history_key, input_key, use_human):
+    if st.session_state.get("await_agent_response", False):
+        conversation = [m for m in st.session_state[chat_history_key] if m["role"] != "system"]
+        conv_txt = ""
+        for m in conversation:
+            if m["role"] == "assistant":
+                conv_txt += "\n\nAgent: " + m["content"]
+            elif m["role"] == "user":
+                conv_txt += "\n\nCustomer: " + m["content"]
+        conv_txt = conv_txt.strip()
+        if use_human:
+            best_guideline = get_best_guideline(conv_txt, embedding_client, scenario_embeds_augmented, guidelines_augmented)
+        else:
+            best_guideline = get_best_guideline(conv_txt, embedding_client, scenario_embeds_simulated, guidelines_simulated)
+        llm_response = gen_agent_response(conv_txt, student_model, client=client, guidelines=best_guideline, temperature=0.3)
+        st.session_state[chat_history_key].append({"role": "assistant", "content": llm_response})
+        st.session_state["await_agent_response"] = False
+
+# --- Chat UI for only the assigned agent ---
+st.write(f"**Chat with {agent_label}**")
+for msg in st.session_state["chat_history_agent"]:
+    if msg["role"] == "user":
+        st.markdown(f"**You:** {msg['content']}")
+    elif msg["role"] == "assistant":
+        st.markdown(f"**{agent_label}:** {msg['content']}")
+
+st.session_state.setdefault("await_agent_response", False)
+st.session_state.setdefault("clear_input_agent", False)
+
+input_placeholder = st.empty()
+if st.session_state["clear_input_agent"]:
+    user_message = input_placeholder.text_input(
+        f"Enter your message to {agent_label}",
+        value="",
+        key="temp_input_agent"
+    )
+    st.session_state["clear_input_agent"] = False
+else:
+    user_message = input_placeholder.text_input(
+        f"Enter your message to {agent_label}",
+        key="user_input_agent"
+    )
+
+if st.button(f"Send to {agent_label}", key="send_btn_agent", disabled=st.session_state.get("await_agent_response", False)):
+    if user_message:
+        st.session_state["chat_history_agent"].append({"role": "user", "content": user_message})
+        st.session_state["await_agent_response"] = True
+        st.session_state["clear_input_agent"] = True
+        st.rerun()
+
+if st.session_state["await_agent_response"]:
+    send_message("chat_history_agent", "user_input_agent", st.session_state["guideline_for_agent"])
+    st.session_state["await_agent_response"] = False
+    st.rerun()
+
+# Rating slider
+st.slider(f"Rate {agent_label} …", 1, 5, value=1, key="rating_agent")
+
+# Count agent responses
+agent_turns = len([msg for msg in st.session_state["chat_history_agent"] if msg["role"] == "assistant"])
+num_turns = 4
+not_enough_turns = agent_turns < num_turns + 1
+
+if not_enough_turns:
+    st.warning("Please complete **4 full exchanges** (i.e., you send a message *and* receive a response, 4 times) before submitting your feedback.")
+
+st.subheader("Briefly explain your rating")
+st.text_area("Your comments:", key="comments", value=st.session_state.get("comments", ""))
+
 def create_connection():
     return psycopg2.connect(
         dbname=st.secrets["database"]["DB_NAME"],
@@ -25,261 +174,32 @@ def create_connection():
         sslmode="require"
     )
 
-if "rating_agent_1" not in st.session_state:
-    st.session_state["rating_agent_1"] = 0
-if "rating_agent_2" not in st.session_state:
-    st.session_state["rating_agent_2"] = 0
-if "comments_agent1" not in st.session_state:
-    st.session_state["comments_agent1"] = ""
-if "comments_agent2" not in st.session_state:
-    st.session_state["comments_agent2"] = ""
-if "chat_history_agent_1" not in st.session_state:
-    st.session_state["chat_history_agent_1"] = [
-        {"role": "system", "content": agent_1_sys_txt},
-        {"role": "assistant", "content": "Hello, this is Agent 1. How can I help you today?"}
-    ]
-if "chat_history_agent_2" not in st.session_state:
-    st.session_state["chat_history_agent_2"] = [
-        {"role": "system", "content": agent_2_sys_txt},
-        {"role": "assistant", "content": "Hello, this is Agent 2. How can I assist you?"}
-    ]
-if "user_input_agent_1" not in st.session_state:
-    st.session_state["user_input_agent_1"] = ""
-if "user_input_agent_2" not in st.session_state:
-    st.session_state["user_input_agent_2"] = ""
-
-# Reset function to clear session states
-def reset_form():
-    # Reset session state keys not tied to widgets
-    st.session_state["chat_history_agent_1"] = [
-        {"role": "system", "content": agent_1_sys_txt},
-        {"role": "assistant", "content": "Hello, this is Agent 1. How can I help you today?"}
-    ]
-    st.session_state["chat_history_agent_2"] = [
-        {"role": "system", "content": agent_2_sys_txt},
-        {"role": "assistant", "content": "Hello, this is Agent 2. How can I assist you?"}
-    ]
-
-
-
-
-
-# Configure OpenAI API key
-openai.api_key = st.secrets["OPENAI_API_KEY"]
-
-
-
-# Randomly assign each function to Agent 1 and Agent 2 at the start of the session and store the mapping
-if "agent_1_response_func" not in st.session_state:
-    funcs = random.sample([get_teacher_response, get_student_response], 2)
-    st.session_state["agent_1_response_func"] = funcs[0]
-    st.session_state["agent_2_response_func"] = funcs[1]
-    # st.session_state["agent_1_func_name"] = "get_teacher_response" if funcs[0] == get_teacher_response else "get_student_response"
-    # st.session_state["agent_2_func_name"] = "get_teacher_response" if funcs[1] == get_teacher_response else "get_student_response"
-    st.session_state['agent_1'] = "gpt-4" if funcs[0] == get_teacher_response else student_model
-    st.session_state['agent_2'] = "gpt-4" if funcs[1] == get_teacher_response else student_model
-# Configure Streamlit app layout
-st.set_page_config(page_title="LLM Chat Interface", layout="wide")
-
-st.title("Live Chat with Two Customer Service Agents")
-# st.write("Interact with Agent 1 and Agent 2 to request a full refund for a restricted ticket.")
-st.markdown(
-    """
-    <div style="
-        border: 2px solid #B0B0B0; 
-        background-color: #f9f9f9; 
-        padding: 15px; 
-        border-radius: 10px; 
-        margin-bottom: 20px;">
-        <p style="font-size: 16px; color: #333;">
-        <b>In this study, you will role-play as an airline customer separately contacting two independent customer service agents. You recently purchased a non-refundable, non-changeable flight ticket (confirmation number: YAL165) one day ago. Your goal is to request the cancellation of this restricted ticket and attempt to obtain a full refund. Each agent has no knowledge of your interaction or any information exchanged with the other. After each interaction, please rate the agent’s performance and provide specific suggestions on how they can enhance their customer service skills.</b><br><br>
-        <b>Objective:</b> Negotiate as you would in a real-life situation.<br><br>
-        <b>Guidelines:</b><br>
-        - Use persuasive and realistic arguments to achieve your goal.<br>
-        - If the conversation requires details not included in the instruction, use your best judgment to provide reasonable and realistic information.<br>
-        - Rate each agent at the end of the conversation.<br><br>
-        <b>Note:</b> It takes a few seconds for the agent to respond. Do not refresh the page while waiting for a response.
-        </p>
-    </div>
-    """, 
-    unsafe_allow_html=True
-)
-
-
-
-
-
-# Function to handle sending messages for each agent
-def send_message(agent):
-    user_message = st.session_state[f"user_input_{agent}"]
-    if user_message:
-        if agent == "agent_1":
-            st.session_state["chat_history_agent_1"].append({"role": "user", "content": user_message})
-            llm_response = st.session_state["agent_1_response_func"](st.session_state["chat_history_agent_1"],st.session_state['agent_1'])
-            st.session_state["chat_history_agent_1"].append({"role": "assistant", "content": llm_response})
-        else:
-            st.session_state["chat_history_agent_2"].append({"role": "user", "content": user_message})
-            llm_response = st.session_state["agent_2_response_func"](st.session_state["chat_history_agent_2"],st.session_state['agent_2'])
-            st.session_state["chat_history_agent_2"].append({"role": "assistant", "content": llm_response})
-
-        # Clear the input field for the specific agent
-        st.session_state[f"user_input_{agent}"] = ""
-
-# Set up two columns for side-by-side interaction with both agents
-col1, spacer, col2 = st.columns([1, 0.1, 1]) 
-
-# Column for Agent 1
-with col1:
-    st.write("**Chat with Agent 1**")
-    for message in st.session_state["chat_history_agent_1"]:
-        if message["role"] == "user":
-            st.markdown(f"**You:** {message['content']}")
-        elif message["role"] == "assistant":
-            st.markdown(f"**Agent 1:** {message['content']}")
-    
-    # Input field for Agent 1
-    st.text_input("Enter your message to Agent 1", key="user_input_agent_1", value="", on_change=lambda: send_message("agent_1"))
-    
-    # Rating for Agent 1
-    st.slider(
-        "Rate Agent 1 - 1 means very disatisfied and 5 means very satisfied",
-        min_value=1,
-        max_value=5,
-        key="rating_agent_1"
-    )
-with spacer:
-    st.write("")
-# Column for Agent 2
-with col2:
-    st.write("**Chat with Agent 2**")
-    for message in st.session_state["chat_history_agent_2"]:
-        if message["role"] == "user":
-            st.markdown(f"**You:** {message['content']}")
-        elif message["role"] == "assistant":
-            st.markdown(f"**Agent 2:** {message['content']}")
-    
-    # Input field for Agent 2
-    st.text_input("Enter your message to Agent 2", key="user_input_agent_2", value="", on_change=lambda: send_message("agent_2"))
-    
-    # Rating for Agent 2
-    st.slider(
-        "Rate Agent 2 - 1 means very disatisfied and 5 means very satisfied",
-        min_value=1,
-        max_value=5,
-        key="rating_agent_2"
-    )
-
-# Comments section for both agents
-st.subheader("Suggestions for Agent 1")
-st.text_area("Please provide feedback on how Agent 1 can improve:", key="comments_agent1", value="")
-
-st.subheader("Suggestions for Agent 2")
-st.text_area("Please provide feedback on how Agent 2 can improve:", key="comments_agent2", value="")
-
-# Select the better agent
-better_agent = st.radio("Which agent do you think performed better?", ("Agent 1", "Agent 2"))
-
-# Button to submit feedback and choice of better agent
-# if st.button("Submit Feedback"):
-    # connection = create_connection()
-    # cursor = connection.cursor()
-    
-    # # Filter chat histories to exclude system messages
-    # filtered_conversation_agent_1 = [
-    #     message for message in st.session_state["chat_history_agent_1"] if message["role"] != "system"
-    # ]
-    # filtered_conversation_agent_2 = [
-    #     message for message in st.session_state["chat_history_agent_2"] if message["role"] != "system"
-    # ]
-    
-    # # Serialize conversations
-    # conversation_agent_1 = json.dumps(filtered_conversation_agent_1)
-    # conversation_agent_2 = json.dumps(filtered_conversation_agent_2)
-    
-    # # Get current timestamp
-    # survey_time = datetime.now()
-    
-    # # Insert feedback with function mapping info, agent selection, and ratings into the database
-    # cursor.execute("""
-    #     INSERT INTO hum_2LLMagents_conv (
-    #         user_id, survey_time, agent_1, agent_2,
-    #         conversation_agent_1, conversation_agent_2,
-    #         rating_agent_1, rating_agent_2, better_agent,
-    #         comments, model_type
-    #     ) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
-    # """, (
-    #     st.session_state.get("user_id", "anonymous"),
-    #     survey_time,
-    #     st.session_state["agent_1"],
-    #     st.session_state["agent_2"],
-    #     conversation_agent_1,
-    #     conversation_agent_2,
-    #     st.session_state["rating_agent_1"],
-    #     st.session_state["rating_agent_2"],
-    #     better_agent,
-    #     st.session_state["comments"],
-    #     "base_student_model"
-    # ))
-    
-    # connection.commit()
-    # cursor.close()
-    # connection.close()
-    
-
-if st.button("Submit Feedback", disabled=st.session_state.get("form_submitted", False)):
-    st.session_state["form_submitted"] = True  # Disable button after click
-    # Your existing feedback submission code here
-
+if st.button("Submit Feedback", disabled=not_enough_turns or st.session_state.get("form_submitted", False)):
+    st.session_state["form_submitted"] = True
     connection = create_connection()
     cursor = connection.cursor()
-    
-    # Filter chat histories to exclude system messages
-    filtered_conversation_agent_1 = [
-        message for message in st.session_state["chat_history_agent_1"] if message["role"] != "system"
-    ]
-    filtered_conversation_agent_2 = [
-        message for message in st.session_state["chat_history_agent_2"] if message["role"] != "system"
-    ]
-    
-    # Serialize conversations
-    conversation_agent_1 = json.dumps(filtered_conversation_agent_1)
-    conversation_agent_2 = json.dumps(filtered_conversation_agent_2)
-    
-    # Get current timestamp
-    survey_time = datetime.now()
-    
-    # Insert feedback with function mapping info, agent selection, and ratings into the database
+    conversation_agent = json.dumps([msg for msg in st.session_state["chat_history_agent"] if msg["role"] != "system"])
+    elapsed_time = datetime.now() - start_time
+    agent_model = student_model + ("-augmented" if st.session_state["guideline_for_agent"] else "-simulated")
+
     cursor.execute("""
-        INSERT INTO hum_2LLMagents_conv (
-            user_id, survey_time, agent_1, agent_2,
-            conversation_agent_1, conversation_agent_2,
-            rating_agent_1, rating_agent_2, better_agent,
-            comments_agent1, comments_agent2, model_type
-        ) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
+        INSERT INTO one_agent_human_in_the_loop_evals (
+            user_id, elapsed_time, agent,
+            conversation_agent,
+            rating_agent, comment, model_type
+        ) VALUES (%s, %s, %s, %s, %s, %s, %s)
     """, (
         st.session_state.get("user_id", "anonymous"),
-        survey_time,
-        st.session_state["agent_1"],
-        st.session_state["agent_2"],
-        conversation_agent_1,
-        conversation_agent_2,
-        st.session_state["rating_agent_1"],
-        st.session_state["rating_agent_2"],
-        better_agent,
-        st.session_state["comments_agent1"],
-        st.session_state["comments_agent2"],
-        "base_student_model"
+        elapsed_time,
+        agent_model,
+        conversation_agent,
+        st.session_state["rating_agent"],
+        st.session_state["comments"],
+        student_model
     ))
-    
+
     connection.commit()
     cursor.close()
     connection.close()
-
-
-
-
-    st.success("Thank you for your feedback!")
-
-    # Call the reset function after successful submission
-    reset_form()
-
+    st.session_state["show_thank_you"] = True   
+    st.rerun()
