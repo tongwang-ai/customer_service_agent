@@ -62,7 +62,7 @@ agent_label = "Customer Service Agent"
 if "chat_history_agent" not in st.session_state:
     st.session_state["chat_history_agent"] = [
         {"role": "system", "content": my_prompts.AGENT_PROMPT_TICKET},
-        {"role": "assistant", "content": f"Hello, this is the {agent_label}, how can I help you?"}
+        {"role": "assistant", "content": f"Hello, this is the Agent 06520, how can I help you?"}
     ]
 if "user_input_agent" not in st.session_state:
     st.session_state["user_input_agent"] = ""
@@ -110,7 +110,7 @@ def send_message(chat_history_key, input_key, use_human):
         st.session_state["await_agent_response"] = False
 
 # --- Chat UI for single agent ---
-st.write(f"**Chat with {agent_label}**")
+st.write(f"**Chat with a customer service agent**")
 for msg in st.session_state["chat_history_agent"]:
     if msg["role"] == "user":
         st.markdown(f"**You:** {msg['content']}")
