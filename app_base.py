@@ -183,7 +183,7 @@ with col2:
             INSERT INTO one_agent_human_in_the_loop_evals (
                 user_id, elapsed_time, agent,
                 conversation,
-                rating, comment, model_type
+                rating, comments, model_type
             ) VALUES (%s, %s, %s, %s, %s, %s, %s)
         """, (
             st.session_state.get("user_id", "anonymous"),
