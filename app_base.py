@@ -68,19 +68,21 @@ if "user_input_agent" not in st.session_state:
 
 st.markdown(
     """
-    <div style="border: 2px solid #B0B0B0; background-color: #f9f9f9; padding: 15px; border-radius: 10px; margin-bottom: 20px;">
-        <p style="font-size: 16px; color: #333;">
-        <b>Your task is to interact with the agent to request a full refund for a restricted ticket with booking reference YAL165.</b><br><br>
+<div style="border: 2px solid #B0B0B0; background-color: #f9f9f9; padding: 15px; border-radius: 10px; margin-bottom: 20px;">
+    <p style="font-size: 16px; color: #333;">
+        <b>Your task:</b> Interact with the agent to cancel a restricted ticket and request a full refund.<br>
+        <b>Booking reference:</b> <span style="color: #0057b8;">YAL165</span>.<br><br>
         <b>Objective:</b> Negotiate for a refund as you would in a real-life situation.<br><br>
         <b>Guidelines:</b><br>
-        - Use persuasive and realistic arguments to achieve your goal - which is to get a full refund.<br>
-        - Try to engage in multiple rounds of back-and-forth dialogue.<br>
-        - If the conversation requires details not included in the instructions, use your best judgment to provide reasonable and realistic information.<br><br>
+        - Use persuasive and realistic arguments to achieve your goal: a full refund.<br>
+        - Engage in multiple rounds of back-and-forth dialogue.<br>
+        - If more details are needed, use your best judgment to provide reasonable, realistic information.<br>
+        - At the end of the conversation, you will be prompted to rate the agent as you would a real human customer service agent.<br><br>
         <span style="color: red; font-weight: bold;font-size: 20px;">
-            Note: Once you send a message, it may take a few seconds for the agent to respond. DO NOT keep sending messages or refresh while waiting for a response.
+            Note: After sending a message, please wait a few seconds for the agent to respond. Avoid sending additional messages or refreshing the page during this time.
         </span>
-        </p>
-    </div>
+    </p>
+</div>
     """,
     unsafe_allow_html=True
 )
