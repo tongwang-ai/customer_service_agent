@@ -169,32 +169,34 @@ def create_connection():
         sslmode="require"
     )
 
-if st.button("Submit Feedback", disabled=not_enough_turns or st.session_state.get("form_submitted", False)):
-    st.session_state["form_submitted"] = True
-    connection = create_connection()
-    cursor = connection.cursor()
-    conversation_agent = json.dumps([msg for msg in st.session_state["chat_history_agent"] if msg["role"] != "system"])
-    elapsed_time = datetime.now() - start_time
-    agent_model = student_model + ("-augmented" if st.session_state["guideline_for_agent"] else "-simulated")
-
-    cursor.execute("""
-        INSERT INTO one_agent_human_in_the_loop_evals (
-            user_id, elapsed_time, agent,
-            conversation,
-            rating, comment, model_type
-        ) VALUES (%s, %s, %s, %s, %s, %s, %s)
-    """, (
-        st.session_state.get("user_id", "anonymous"),
-        elapsed_time,
-        agent_model,
-        conversation_agent,
-        st.session_state["rating_agent"],
-        st.session_state["comments"],
-        student_model
-    ))
-
-    connection.commit()
-    cursor.close()
-    connection.close()
-    st.session_state["show_thank_you"] = True   
-    st.rerun()
+col1, col2, col3 = st.columns([1,1,1])
+with col2:
+    if st.button("Submit Feedback", disabled=not_enough_turns or st.session_state.get("form_submitted", False)):
+        st.session_state["form_submitted"] = True
+        connection = create_connection()
+        cursor = connection.cursor()
+        conversation_agent = json.dumps([msg for msg in st.session_state["chat_history_agent"] if msg["role"] != "system"])
+        elapsed_time = datetime.now() - start_time
+        agent_model = student_model + ("-augmented" if st.session_state["guideline_for_agent"] else "-simulated")
+    
+        cursor.execute("""
+            INSERT INTO one_agent_human_in_the_loop_evals (
+                user_id, elapsed_time, agent,
+                conversation,
+                rating, comment, model_type
+            ) VALUES (%s, %s, %s, %s, %s, %s, %s)
+        """, (
+            st.session_state.get("user_id", "anonymous"),
+            elapsed_time,
+            agent_model,
+            conversation_agent,
+            st.session_state["rating_agent"],
+            st.session_state["comments"],
+            student_model
+        ))
+    
+        connection.commit()
+        cursor.close()
+        connection.close()
+        st.session_state["show_thank_you"] = True   
+        st.rerun()
