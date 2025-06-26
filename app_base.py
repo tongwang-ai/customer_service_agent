@@ -171,7 +171,7 @@ def create_connection():
 
 col1, col2, col3 = st.columns([1,1,1])
 with col2:
-    if st.button("Submit Feedback", disabled=not_enough_turns or st.session_state.get("form_submitted", False)):
+    if st.button("Submit survey", disabled=not_enough_turns or st.session_state.get("form_submitted", False)):
         st.session_state["form_submitted"] = True
         connection = create_connection()
         cursor = connection.cursor()
