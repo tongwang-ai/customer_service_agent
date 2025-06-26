@@ -73,8 +73,8 @@ st.markdown(
         <b>Your task is to interact with the agent to request a full refund for a restricted ticket with booking reference YAL165.</b><br><br>
         <b>Objective:</b> Negotiate for a refund as you would in a real-life situation.<br><br>
         <b>Guidelines:</b><br>
-        - Use persuasive and realistic arguments to achieve your goal.<br>
-        - Try to have at least 4 rounds of back-and-forth dialogue.<br>
+        - Use persuasive and realistic arguments to achieve your goal - which is to get a full refund.<br>
+        - Try to engage in multiple rounds of back-and-forth dialogue.<br>
         - If the conversation requires details not included in the instructions, use your best judgment to provide reasonable and realistic information.<br><br>
         <span style="color: red; font-weight: bold;font-size: 20px;">
             Note: Once you send a message, it may take a few seconds for the agent to respond. DO NOT keep sending messages or refresh while waiting for a response.
@@ -153,8 +153,8 @@ agent_turns = len([msg for msg in st.session_state["chat_history_agent"] if msg[
 num_turns = 4
 not_enough_turns = agent_turns < num_turns + 1
 
-# if not_enough_turns:
-#     st.warning("Please complete at least **4 full exchanges** (i.e., you send a message *and* receive a response, 4 times) before submitting your feedback.")
+if not_enough_turns:
+    st.warning("Your conversation is too short.")
 
 st.subheader("Briefly explain your rating")
 st.text_area("Your comments:", key="comments", value=st.session_state.get("comments", ""))
