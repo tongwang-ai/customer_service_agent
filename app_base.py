@@ -185,8 +185,8 @@ if st.button("Submit Feedback", disabled=not_enough_turns or st.session_state.ge
     cursor.execute("""
         INSERT INTO one_agent_human_in_the_loop_evals (
             user_id, elapsed_time, agent,
-            conversation_agent,
-            rating_agent, comment, model_type
+            conversation,
+            rating, comment, model_type
         ) VALUES (%s, %s, %s, %s, %s, %s, %s)
     """, (
         st.session_state.get("user_id", "anonymous"),
