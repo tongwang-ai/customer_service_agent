@@ -180,9 +180,9 @@ def create_connection():
 
 col1, col2, col3 = st.columns([1,1,1])
 with col2:
-    if not_enough_turns:
-        st.warning("If your conversation is too short, you won't be able to submit.")
-    if st.button("Submit survey", disabled=not_enough_turns or st.session_state.get("form_submitted", False)):
+    # if not_enough_turns:
+    #     st.warning("If your conversation is too short, you won't be able to submit.")
+    if st.button("Submit survey", disabled= st.session_state.get("form_submitted", False)):
         st.session_state["form_submitted"] = True
         connection = create_connection()
         cursor = connection.cursor()
