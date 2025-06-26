@@ -26,7 +26,6 @@ library_simulated = pickle.load(open('gpt-3.5-turbo-0125-library_simulated.pkl',
 scenario_embeds_simulated = library_simulated['scenario_embedding']
 guidelines_simulated = library_simulated['guidelines']
 
-openai.api_key = st.secrets["OPENAI_API_KEY"]
 
 st.set_page_config(page_title="LLM Chat Interface", layout="wide")
 input_placeholder = st.empty()  # create a container
@@ -154,8 +153,8 @@ agent_turns = len([msg for msg in st.session_state["chat_history_agent"] if msg[
 num_turns = 4
 not_enough_turns = agent_turns < num_turns + 1
 
-if not_enough_turns:
-    st.warning("Please complete **4 full exchanges** (i.e., you send a message *and* receive a response, 4 times) before submitting your feedback.")
+# if not_enough_turns:
+#     st.warning("Please complete at least **4 full exchanges** (i.e., you send a message *and* receive a response, 4 times) before submitting your feedback.")
 
 st.subheader("Briefly explain your rating")
 st.text_area("Your comments:", key="comments", value=st.session_state.get("comments", ""))
