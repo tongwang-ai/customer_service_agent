@@ -151,11 +151,11 @@ if st.session_state["await_agent_response"]:
 st.radio(
     "How satisfied are you with the agent's service?",
     [
-        "1: Extremely unsatisfied",
+        "1: Very unsatisfied",
         "2: Unsatisfied",
         "3: Neutral",
         "4: Satisfied",
-        "5: Extremely satisfied"
+        "5: Very satisfied"
     ],
     key="rating_agent"
 )
