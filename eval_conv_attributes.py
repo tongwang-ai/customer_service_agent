@@ -1,6 +1,7 @@
 import streamlit as st
 import pandas as pd
 import psycopg2
+import time
 from datetime import datetime
 
 ########################################
@@ -9,11 +10,11 @@ from datetime import datetime
 def save_to_db(user_responses, start_time):
     try:
         conn = psycopg2.connect(
-            dbname="postgres",
-            user="tongwang",
-            password="TWluckygirlno01!",
-            host="streamlit-app.ch8aw0oiyxfa.us-east-2.rds.amazonaws.com",
-            port="5432",
+            dbname=st.secrets["database"]["DB_NAME"],
+            user=st.secrets["database"]["DB_USER"],
+            password=st.secrets["database"]["DB_PASSWORD"],
+            host=st.secrets["database"]["DB_HOST"],
+            port=st.secrets["database"]["DB_PORT"],
             sslmode="require"
         )
         with conn.cursor() as cur:
@@ -67,8 +68,9 @@ def main():
     # Initialize Session States
     if "start_time" not in st.session_state:
         st.session_state["start_time"] = datetime.now()
+        # Also store as unix timestamp for easy math
+        st.session_state["start_unix"] = time.time()
     
-    # Track which conversations have been viewed
     if "viewed_indices" not in st.session_state:
         st.session_state["viewed_indices"] = set()
 
@@ -94,15 +96,13 @@ def main():
         format_func=lambda x: f"Conversation {x+1}"
     )
     
-    # Update progress tracking
     st.session_state["viewed_indices"].add(selection)
     progress = len(st.session_state["viewed_indices"])
 
     st.sidebar.markdown("---")
     st.sidebar.write(f"**Progress: {progress} / 4 Reviewed**")
     st.sidebar.progress(progress / 4)
-    st.sidebar.info("The 'Submit' button will activate once all 4 conversations have been reviewed.")
-
+    
     # --- Display Selected Conversation ---
     row = df_sampled.iloc[selection]
     orig_idx = row['index']
@@ -116,36 +116,31 @@ def main():
     with col2:
         st.subheader("Performance Ratings")
         
-        # 1. Reliability
         st.markdown("**Reliability**: Ability to perform the promised service dependably and accurately.")
         st.caption("*Key Indicators: Did the agent provide the correct solution? Was the information factually accurate? Did they follow through on promises?*")
         rel = st.select_slider("Rate Reliability", options=[1, 2, 3, 4, 5], key=f"rel_{selection}", value=5)
         
         st.write("---")
 
-        # 2. Assurance
         st.markdown("**Assurance**: Knowledge and courtesy of employees and their ability to convey trust.")
         st.caption("*Key Indicators: Did the agent sound like an expert? Did they use professional language? Did the customer feel confident in the advice?*")
         assur = st.select_slider("Rate Assurance", options=[1, 2, 3, 4, 5], key=f"assur_{selection}", value=5)
 
         st.write("---")
 
-        # 3. Empathy
         st.markdown("**Empathy**: Provision of caring, individualized attention to customers.")
         st.caption("*Key Indicators: Did the agent use the customer's name? Did they acknowledge feelings/frustration? Was the service personalized?*")
         emp = st.select_slider("Rate Empathy", options=[1, 2, 3, 4, 5], key=f"emp_{selection}", value=5)
 
         st.write("---")
 
-        # 4. Responsiveness
         st.markdown("**Responsiveness**: Willingness to help customers and provide prompt service.")
         st.caption("*Key Indicators: Did the agent seem eager to assist? Was the response proactive? Did the agent take immediate ownership?*")
         resp = st.select_slider("Rate Responsiveness", options=[1, 2, 3, 4, 5], key=f"resp_{selection}", value=5)
 
-    # Gather data from session state for all 4 samples
+    # Gather data
     all_data_to_submit = []
     for i in range(4):
-        # We fetch current slider values from session state, defaulting to 5 if not touched
         all_data_to_submit.append({
             "conversation_index": df_sampled.iloc[i]['index'],
             "reliability": st.session_state.get(f"rel_{i}", 5),
@@ -156,13 +151,28 @@ def main():
 
     st.markdown("---")
     
-    # --- Final Submission Logic ---
+    # --- Quality Control & Submission Logic ---
     if progress >= 4:
         if st.button("Submit All Evaluations", type="primary", use_container_width=True):
-            success = save_to_db(all_data_to_submit, st.session_state["start_time"])
-            if success:
-                st.success("Evaluations successfully submitted to the database!")
-                st.balloons()
+            # Calculate elapsed time
+            current_time = time.time()
+            elapsed_seconds = current_time - st.session_state["start_unix"]
+            
+            if elapsed_seconds < 180:
+                # Warning for fast submission (less than 1 min)
+                st.error("⚠️ **Submission Error: Review Time Too Short**")
+                st.warning(f"""
+                Please read the conversations carefully before you rate them. 
+                Our research parameters require a thorough review of the transcripts. 
+                
+                **Note:** Careless or automated submissions will not be counted. 
+                Please take another {int(60 - elapsed_seconds)} seconds to verify your ratings.
+                """)
+            else:
+                success = save_to_db(all_data_to_submit, st.session_state["start_time"])
+                if success:
+                    st.success("Evaluations successfully submitted to the database!")
+                    st.balloons()
     else:
         st.button(f"Submit Disabled (Review {4-progress} more)", type="secondary", use_container_width=True, disabled=True)
 
