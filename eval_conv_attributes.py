@@ -7,7 +7,7 @@ from datetime import datetime
 ########################################
 # 1) Database Connection
 ########################################
-def save_to_db(user_responses, start_time):
+def save_to_db(user_responses, start_time, elapsed_seconds):
     try:
         conn = psycopg2.connect(
             dbname=st.secrets["database"]["DB_NAME"],
@@ -27,14 +27,15 @@ def save_to_db(user_responses, start_time):
                     empathy INTEGER,
                     responsiveness INTEGER,
                     start_time TIMESTAMP,
-                    submission_time TIMESTAMP
+                    submission_time TIMESTAMP,
+                    seconds_spent INTEGER
                 );
             """)
             
             insert_query = """
                 INSERT INTO rater_evaluations_gpt_3_5_turbo_0125_gpt_4 
-                (conversation_index, reliability, assurance, empathy, responsiveness, start_time, submission_time)
-                VALUES (%s, %s, %s, %s, %s, %s, %s)
+                (conversation_index, reliability, assurance, empathy, responsiveness, start_time, submission_time, seconds_spent)
+                VALUES (%s, %s, %s, %s, %s, %s, %s, %s)
             """
             
             submission_time = datetime.now()
@@ -46,7 +47,8 @@ def save_to_db(user_responses, start_time):
                     resp["empathy"],
                     resp["responsiveness"],
                     start_time, 
-                    submission_time
+                    submission_time,
+                    int(elapsed_seconds)
                 ))
             
             conn.commit()
@@ -63,12 +65,26 @@ def main():
     st.set_page_config(page_title="RATER Evaluation Tool", layout="wide")
     
     st.title("Service Quality Assessment: The RATER Framework")
+    
+    # --- New Instructions Section ---
+    with st.expander("📝 View Instructions & Evaluation Criteria", expanded=True):
+        st.markdown("""
+        ### Welcome to the Agent Performance Survey
+        In this study, you will evaluate **4 unique conversations** between a customer service agent and a client. 
+        Your goal is to assess the agent's performance using the **RATER Framework**, a validated academic model for measuring service quality.
+
+        **Guidelines:**
+        1. **Read Carefully:** Please read the full transcript for each conversation before providing ratings.
+        2. **Standard of Excellence:** The default rating is set to **5 (Excellent)**. Please adjust the sliders if the agent's performance falls below this standard.
+        3. **Quality Control:** To ensure data integrity, the system requires a minimum of **3 minutes** to review the material before submission is allowed.
+        4. **Dimensions:** You will rate each agent on *Reliability, Assurance, Empathy,* and *Responsiveness*.
+        """)
+
     st.markdown("---")
 
     # Initialize Session States
     if "start_time" not in st.session_state:
         st.session_state["start_time"] = datetime.now()
-        # Also store as unix timestamp for easy math
         st.session_state["start_unix"] = time.time()
     
     if "viewed_indices" not in st.session_state:
@@ -117,25 +133,25 @@ def main():
         st.subheader("Performance Ratings")
         
         st.markdown("**Reliability**: Ability to perform the promised service dependably and accurately.")
-        st.caption("*Key Indicators: Did the agent provide the correct solution? Was the information factually accurate? Did they follow through on promises?*")
+        st.caption("*Key Indicators: Correct solution, factual accuracy, following through on promises.*")
         rel = st.select_slider("Rate Reliability", options=[1, 2, 3, 4, 5], key=f"rel_{selection}", value=5)
         
         st.write("---")
 
         st.markdown("**Assurance**: Knowledge and courtesy of employees and their ability to convey trust.")
-        st.caption("*Key Indicators: Did the agent sound like an expert? Did they use professional language? Did the customer feel confident in the advice?*")
+        st.caption("*Key Indicators: Expertise, professional language, customer confidence.*")
         assur = st.select_slider("Rate Assurance", options=[1, 2, 3, 4, 5], key=f"assur_{selection}", value=5)
 
         st.write("---")
 
         st.markdown("**Empathy**: Provision of caring, individualized attention to customers.")
-        st.caption("*Key Indicators: Did the agent use the customer's name? Did they acknowledge feelings/frustration? Was the service personalized?*")
+        st.caption("*Key Indicators: Using name, acknowledging feelings, personalization.*")
         emp = st.select_slider("Rate Empathy", options=[1, 2, 3, 4, 5], key=f"emp_{selection}", value=5)
 
         st.write("---")
 
         st.markdown("**Responsiveness**: Willingness to help customers and provide prompt service.")
-        st.caption("*Key Indicators: Did the agent seem eager to assist? Was the response proactive? Did the agent take immediate ownership?*")
+        st.caption("*Key Indicators: Eagerness to assist, proactivity, ownership.*")
         resp = st.select_slider("Rate Responsiveness", options=[1, 2, 3, 4, 5], key=f"resp_{selection}", value=5)
 
     # Gather data
@@ -154,22 +170,14 @@ def main():
     # --- Quality Control & Submission Logic ---
     if progress >= 4:
         if st.button("Submit All Evaluations", type="primary", use_container_width=True):
-            # Calculate elapsed time
             current_time = time.time()
             elapsed_seconds = current_time - st.session_state["start_unix"]
             
             if elapsed_seconds < 180:
-                # Warning for fast submission (less than 1 min)
                 st.error("⚠️ **Submission Error: Review Time Too Short**")
-                st.warning(f"""
-                Please read the conversations carefully before you rate them. 
-                Our research parameters require a thorough review of the transcripts. 
-                
-                **Note:** Careless or automated submissions will not be counted. 
-                Please take another {int(60 - elapsed_seconds)} seconds to verify your ratings.
-                """)
+                st.warning(f"Careless submissions will not be counted. Please take another {int(180 - elapsed_seconds)} seconds to review.")
             else:
-                success = save_to_db(all_data_to_submit, st.session_state["start_time"])
+                success = save_to_db(all_data_to_submit, st.session_state["start_time"], elapsed_seconds)
                 if success:
                     st.success("Evaluations successfully submitted to the database!")
                     st.balloons()
