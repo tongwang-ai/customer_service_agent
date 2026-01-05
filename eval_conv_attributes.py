@@ -137,7 +137,7 @@ def main():
         st.subheader("Agent - Customer Conversation")
         # --- IMPROVED READABILITY BOX ---
         # Using a Div instead of a text_area to avoid the "disabled gray" look
-        transcript_html = f'<div class="transcript-box">{row["conv"]}</div>'
+        transcript_html = f'<div class="transcript-box">{row["conversation"]}</div>'
         st.markdown(transcript_html, unsafe_allow_html=True)
     
     with col2:
