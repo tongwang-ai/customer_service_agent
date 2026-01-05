@@ -135,9 +135,11 @@ def main():
     col1, col2 = st.columns([1, 1])
     
     with col1:
-        st.subheader(f"Agent - Customer Conversation (Sample {selection + 1})")
-        # Ensure 'conv' is the correct column name in your CSV
-        st.text_area("", value=row['conversation'], height=600, disabled=True, key=f"text_display_{selection}")
+            st.subheader("Agent - Customer Conversation")
+            # --- IMPROVED READABILITY BOX ---
+            # Using a Div instead of a text_area to avoid the "disabled gray" look
+            transcript_html = f'<div class="transcript-box">{row["conv"]}</div>'
+            st.markdown(transcript_html, unsafe_allow_html=True)
     
     with col2:
         st.subheader("Performance Ratings")
