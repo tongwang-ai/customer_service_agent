@@ -73,14 +73,20 @@ def main():
         st.markdown("""
         ### Welcome to the Agent Performance Survey
         In this study, you will evaluate **4 unique conversations** between a customer service agent and a client. 
-        Your goal is to assess the agent's performance using the **RATER Framework**, a validated academic model for measuring service quality.
-
-        **Guidelines:**
-        1. **Read Carefully:** Please read the full transcript for each conversation before providing ratings.
-        2. **Standard of Excellence:** The default rating is set to **5 (Excellent)**. Please adjust the sliders if the agent's performance falls below this standard.
-        3. **Quality Control:** To ensure data integrity, the system requires a minimum of **3 minutes** to review the material before submission is allowed.
-        4. **Dimensions:** You will rate each agent on *Reliability, Assurance, Empathy,* and *Responsiveness*.
-        """)
+        When reading the transcript, imagine yourself as the customer. Do not look for "technical checkboxes." Instead, ask yourself: 
+        - "Did I get what I needed?" (Reliability)
+        - "Did I feel like I was in good hands?" (Assurance)
+        - "Did I feel like a human being or just a number?" (Empathy)
+        - "Did I feel like the agent actually wanted to help me?" (Responsiveness)
+    
+        **RATER DIMENSIONS (Customer Interpretation)**
+        Rate the following from 1 to 5 (1 = Very Dissatisfied, 5 = Very Satisfied):
+    
+        1. **Reliability**: Did the agent actually solve my problem correctly and do what they said they would do?
+        2. **Assurance**: Did the agent sound like they knew what they were doing? Did I trust the information they gave me?
+        3. **Empathy**: Did the agent seem to care about my situation? Did they listen to my specific concerns?
+        4. **Responsiveness**: How was the agent's "energy"? Did they respond quickly and show an eagerness to resolve my issue?
+            """)
 
     st.markdown("---")
 
