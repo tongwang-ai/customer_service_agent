@@ -19,7 +19,7 @@ def save_to_db(user_responses, start_time, elapsed_seconds):
         )
         with conn.cursor() as cur:
             cur.execute("""
-                CREATE TABLE IF NOT EXISTS rater_evaluations_gpt_3_5_turbo_0125_gpt_4 (
+                CREATE TABLE IF NOT EXISTS rater_evaluations_gpt_3_5_turbo_0125_gpt_4_0613 (
                     id SERIAL PRIMARY KEY,
                     conversation_index INTEGER,
                     reliability INTEGER,
@@ -33,7 +33,7 @@ def save_to_db(user_responses, start_time, elapsed_seconds):
             """)
             
             insert_query = """
-                INSERT INTO rater_evaluations_gpt_3_5_turbo_0125_gpt_4 
+                INSERT INTO rater_evaluations_gpt_3_5_turbo_0125_gpt_4_0613 
                 (conversation_index, reliability, assurance, empathy, responsiveness, start_time, submission_time, seconds_spent)
                 VALUES (%s, %s, %s, %s, %s, %s, %s, %s)
             """
@@ -93,7 +93,7 @@ def main():
     # Load Local CSV
     if "df_local" not in st.session_state:
         try:
-            st.session_state["df_local"] = pd.read_csv("gpt-3.5-turbo-0125-gpt-4-conversations.csv")
+            st.session_state["df_local"] = pd.read_csv("gpt-3.5-turbo-0125-gpt-4-0613-conversations.csv")
         except FileNotFoundError:
             st.error("CSV file not found. Ensure the filename matches exactly.")
             return
