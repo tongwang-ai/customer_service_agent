@@ -9,12 +9,14 @@ from datetime import datetime
 ########################################
 def save_to_db(user_responses, start_time, elapsed_seconds):
     try:
+        # Standard Streamlit secrets access: st.secrets["DB_NAME"] 
+        # or st.secrets["database"]["DB_NAME"] depending on your secrets.toml
         conn = psycopg2.connect(
-            dbname=st.secrets["database"]["DB_NAME"],
-            user=st.secrets["database"]["DB_USER"],
-            password=st.secrets["database"]["DB_PASSWORD"],
-            host=st.secrets["database"]["DB_HOST"],
-            port=st.secrets["database"]["DB_PORT"],
+            dbname=st.secrets["DB_NAME"],
+            user=st.secrets["DB_USER"],
+            password=st.secrets["DB_PASSWORD"],
+            host=st.secrets["DB_HOST"],
+            port=st.secrets["DB_PORT"],
             sslmode="require"
         )
         with conn.cursor() as cur:
@@ -64,9 +66,9 @@ def save_to_db(user_responses, start_time, elapsed_seconds):
 def main():
     st.set_page_config(page_title="RATER Evaluation Tool", layout="wide")
     
+    # --- Instructions Section (Moved to very top) ---
     st.title("Service Quality Assessment: The RATER Framework")
     
-    # --- New Instructions Section ---
     with st.expander("📝 View Instructions & Evaluation Criteria", expanded=True):
         st.markdown("""
         ### Welcome to the Agent Performance Survey
@@ -93,9 +95,10 @@ def main():
     # Load Local CSV
     if "df_local" not in st.session_state:
         try:
+            # Check filename: verify it matches exactly on your computer
             st.session_state["df_local"] = pd.read_csv("gpt-3.5-turbo-0125-gpt-4-0613-conversations.csv")
         except FileNotFoundError:
-            st.error("CSV file not found. Ensure the filename matches exactly.")
+            st.error("CSV file not found. Ensure 'gpt-3.5-turbo-0125-gpt-4-0613-conversations.csv' is in the app folder.")
             return
 
     # Sample 4
@@ -127,34 +130,39 @@ def main():
     
     with col1:
         st.subheader(f"Agent - Customer Conversation (Sample {selection + 1})")
+        # Ensure 'conv' is the correct column name in your CSV
         st.text_area("", value=row['conv'], height=600, disabled=True, key=f"text_display_{selection}")
     
     with col2:
         st.subheader("Performance Ratings")
         
+        # 1. Reliability
         st.markdown("**Reliability**: Ability to perform the promised service dependably and accurately.")
         st.caption("*Key Indicators: Correct solution, factual accuracy, following through on promises.*")
         rel = st.select_slider("Rate Reliability", options=[1, 2, 3, 4, 5], key=f"rel_{selection}", value=5)
         
         st.write("---")
 
+        # 2. Assurance
         st.markdown("**Assurance**: Knowledge and courtesy of employees and their ability to convey trust.")
         st.caption("*Key Indicators: Expertise, professional language, customer confidence.*")
         assur = st.select_slider("Rate Assurance", options=[1, 2, 3, 4, 5], key=f"assur_{selection}", value=5)
 
         st.write("---")
 
+        # 3. Empathy
         st.markdown("**Empathy**: Provision of caring, individualized attention to customers.")
         st.caption("*Key Indicators: Using name, acknowledging feelings, personalization.*")
         emp = st.select_slider("Rate Empathy", options=[1, 2, 3, 4, 5], key=f"emp_{selection}", value=5)
 
         st.write("---")
 
+        # 4. Responsiveness
         st.markdown("**Responsiveness**: Willingness to help customers and provide prompt service.")
         st.caption("*Key Indicators: Eagerness to assist, proactivity, ownership.*")
         resp = st.select_slider("Rate Responsiveness", options=[1, 2, 3, 4, 5], key=f"resp_{selection}", value=5)
 
-    # Gather data
+    # Gather data from all sessions
     all_data_to_submit = []
     for i in range(4):
         all_data_to_submit.append({
