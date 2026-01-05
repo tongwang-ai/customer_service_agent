@@ -80,7 +80,7 @@ def main():
         - "Did I feel like the agent actually wanted to help me?" (Responsiveness)
     
         **RATER DIMENSIONS (Customer Interpretation)**
-        Rate the following from 1 to 5 (1 = Very Dissatisfied, 5 = Very Satisfied):
+        Rate the following from 1 to 5 (**1 = Very Dissatisfied, 5 = Very Satisfied**):
     
         1. **Reliability**: Did the agent actually solve my problem correctly and do what they said they would do?
         2. **Assurance**: Did the agent sound like they knew what they were doing? Did I trust the information they gave me?
