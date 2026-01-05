@@ -9,8 +9,6 @@ from datetime import datetime
 ########################################
 def save_to_db(user_responses, start_time, elapsed_seconds):
     try:
-        # Standard Streamlit secrets access: st.secrets["DB_NAME"] 
-        # or st.secrets["database"]["DB_NAME"] depending on your secrets.toml
         conn = psycopg2.connect(
             dbname=st.secrets["DB_NAME"],
             user=st.secrets["DB_USER"],
@@ -66,31 +64,40 @@ def save_to_db(user_responses, start_time, elapsed_seconds):
 def main():
     st.set_page_config(page_title="RATER Evaluation Tool", layout="wide")
     
-    # --- Instructions Section (Moved to very top) ---
+    # --- CUSTOM CSS FOR HIGH CONTRAST ---
+    st.markdown("""
+        <style>
+        .transcript-box {
+            background-color: #FFFFFF !important;
+            color: #111111 !important;
+            padding: 20px;
+            border-radius: 10px;
+            border: 1px solid #d1d1d1;
+            height: 600px;
+            overflow-y: scroll;
+            font-family: 'Source Sans Pro', sans-serif;
+            font-size: 16px;
+            line-height: 1.6;
+            white-space: pre-wrap;
+        }
+        </style>
+    """, unsafe_allow_html=True)
+    
     st.title("Service Quality Assessment: The RATER Framework")
     
     with st.expander("📝 View Instructions & Evaluation Criteria", expanded=True):
         st.markdown("""
         ### Welcome to the Agent Performance Survey
-        In this study, you will evaluate **4 unique conversations** between a customer service agent and a client. 
-        When reading the transcript, imagine yourself as the customer. Do not look for "technical checkboxes." Instead, ask yourself: 
-        - "Did I get what I needed?" (Reliability)
-        - "Did I feel like I was in good hands?" (Assurance)
-        - "Did I feel like a human being or just a number?" (Empathy)
-        - "Did I feel like the agent actually wanted to help me?" (Responsiveness)
-    
-        **RATER DIMENSIONS (Customer Interpretation)**
-        Rate the following from 1 to 5 (**1 = Very Dissatisfied, 5 = Very Satisfied**):
-    
-        1. **Reliability**: Did the agent actually solve my problem correctly and do what they said they would do?
-        2. **Assurance**: Did the agent sound like they knew what they were doing? Did I trust the information they gave me?
-        3. **Empathy**: Did the agent seem to care about my situation? Did they listen to my specific concerns?
-        4. **Responsiveness**: How was the agent's "energy"? Did they respond quickly and show an eagerness to resolve my issue?
-            """)
+        In this study, you will evaluate **4 unique conversations**. 
+        
+        **Guidelines:**
+        1. **Read Carefully:** The transcript box on the left is scrollable.
+        2. **Standard of Excellence:** The default rating is **5 (Excellent)**.
+        3. **Quality Control:** A minimum of **3 minutes** is required before submission.
+        """)
 
     st.markdown("---")
 
-    # Initialize Session States
     if "start_time" not in st.session_state:
         st.session_state["start_time"] = datetime.now()
         st.session_state["start_unix"] = time.time()
@@ -101,101 +108,81 @@ def main():
     # Load Local CSV
     if "df_local" not in st.session_state:
         try:
-            # Check filename: verify it matches exactly on your computer
             st.session_state["df_local"] = pd.read_csv("gpt-3.5-turbo-0125-gpt-4-0613-conversations.csv")
         except FileNotFoundError:
-            st.error("CSV file not found. Ensure 'gpt-3.5-turbo-0125-gpt-4-0613-conversations.csv' is in the app folder.")
+            st.error("CSV file not found.")
             return
 
-    # Sample 4
-    if "df_sampled" not in st.session_state:
+    df_sampled = st.session_state.get("df_sampled")
+    if df_sampled is None:
         st.session_state["df_sampled"] = st.session_state["df_local"].sample(n=4).reset_index()
+        df_sampled = st.session_state["df_sampled"]
 
-    df_sampled = st.session_state["df_sampled"]
-
-    # --- Sidebar Navigation ---
+    # Sidebar
     st.sidebar.header("Navigation")
-    selection = st.sidebar.radio(
-        "Select Conversation to Rate:",
-        options=[0, 1, 2, 3],
-        format_func=lambda x: f"Conversation {x+1}"
-    )
-    
+    selection = st.sidebar.radio("Select Conversation:", options=[0, 1, 2, 3], format_func=lambda x: f"Conversation {x+1}")
     st.session_state["viewed_indices"].add(selection)
-    progress = len(st.session_state["viewed_indices"])
-
-    st.sidebar.markdown("---")
-    st.sidebar.write(f"**Progress: {progress} / 4 Reviewed**")
-    st.sidebar.progress(progress / 4)
     
-    # --- Display Selected Conversation ---
+    progress = len(st.session_state["viewed_indices"])
+    st.sidebar.progress(progress / 4)
+    st.sidebar.write(f"Progress: {progress} / 4 Reviewed")
+    
+    # Display Content
     row = df_sampled.iloc[selection]
     orig_idx = row['index']
     
     col1, col2 = st.columns([1, 1])
     
     with col1:
-            st.subheader("Agent - Customer Conversation")
-            # --- IMPROVED READABILITY BOX ---
-            # Using a Div instead of a text_area to avoid the "disabled gray" look
-            transcript_html = f'<div class="transcript-box">{row["conv"]}</div>'
-            st.markdown(transcript_html, unsafe_allow_html=True)
+        st.subheader("Agent - Customer Conversation")
+        # --- IMPROVED READABILITY BOX ---
+        # Using a Div instead of a text_area to avoid the "disabled gray" look
+        transcript_html = f'<div class="transcript-box">{row["conv"]}</div>'
+        st.markdown(transcript_html, unsafe_allow_html=True)
     
     with col2:
         st.subheader("Performance Ratings")
         
-        # 1. Reliability
         st.markdown("**Reliability**: Ability to perform the promised service dependably and accurately.")
         st.caption("*Key Indicators: Correct solution, factual accuracy, following through on promises.*")
         rel = st.select_slider("Rate Reliability", options=[1, 2, 3, 4, 5], key=f"rel_{selection}", value=5)
         
         st.write("---")
-
-        # 2. Assurance
         st.markdown("**Assurance**: Knowledge and courtesy of employees and their ability to convey trust.")
         st.caption("*Key Indicators: Expertise, professional language, customer confidence.*")
         assur = st.select_slider("Rate Assurance", options=[1, 2, 3, 4, 5], key=f"assur_{selection}", value=5)
 
         st.write("---")
-
-        # 3. Empathy
         st.markdown("**Empathy**: Provision of caring, individualized attention to customers.")
         st.caption("*Key Indicators: Using name, acknowledging feelings, personalization.*")
         emp = st.select_slider("Rate Empathy", options=[1, 2, 3, 4, 5], key=f"emp_{selection}", value=5)
 
         st.write("---")
-
-        # 4. Responsiveness
         st.markdown("**Responsiveness**: Willingness to help customers and provide prompt service.")
         st.caption("*Key Indicators: Eagerness to assist, proactivity, ownership.*")
         resp = st.select_slider("Rate Responsiveness", options=[1, 2, 3, 4, 5], key=f"resp_{selection}", value=5)
 
-    # Gather data from all sessions
-    all_data_to_submit = []
-    for i in range(4):
-        all_data_to_submit.append({
-            "conversation_index": df_sampled.iloc[i]['index'],
-            "reliability": st.session_state.get(f"rel_{i}", 5),
-            "assurance": st.session_state.get(f"assur_{i}", 5),
-            "empathy": st.session_state.get(f"emp_{i}", 5),
-            "responsiveness": st.session_state.get(f"resp_{i}", 5)
-        })
-
-    st.markdown("---")
-    
-    # --- Quality Control & Submission Logic ---
+    # Submission Logic
     if progress >= 4:
+        current_time = time.time()
+        elapsed_seconds = current_time - st.session_state["start_unix"]
+        
         if st.button("Submit All Evaluations", type="primary", use_container_width=True):
-            current_time = time.time()
-            elapsed_seconds = current_time - st.session_state["start_unix"]
-            
             if elapsed_seconds < 180:
-                st.error("⚠️ **Submission Error: Review Time Too Short**")
-                st.warning(f"Careless submissions will not be counted. Please take another {int(180 - elapsed_seconds)} seconds to review.")
+                st.error(f"⚠️ **Too Fast!** Please take another {int(180 - elapsed_seconds)} seconds to review carefully.")
             else:
-                success = save_to_db(all_data_to_submit, st.session_state["start_time"], elapsed_seconds)
-                if success:
-                    st.success("Evaluations successfully submitted to the database!")
+                # Gather data
+                all_data = []
+                for i in range(4):
+                    all_data.append({
+                        "conversation_index": df_sampled.iloc[i]['index'],
+                        "reliability": st.session_state.get(f"rel_{i}", 5),
+                        "assurance": st.session_state.get(f"assur_{i}", 5),
+                        "empathy": st.session_state.get(f"emp_{i}", 5),
+                        "responsiveness": st.session_state.get(f"resp_{i}", 5)
+                    })
+                if save_to_db(all_data, st.session_state["start_time"], elapsed_seconds):
+                    st.success("Evaluations successfully submitted!")
                     st.balloons()
     else:
         st.button(f"Submit Disabled (Review {4-progress} more)", type="secondary", use_container_width=True, disabled=True)
