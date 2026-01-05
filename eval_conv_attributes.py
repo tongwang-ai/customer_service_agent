@@ -131,7 +131,7 @@ def main():
     with col1:
         st.subheader(f"Agent - Customer Conversation (Sample {selection + 1})")
         # Ensure 'conv' is the correct column name in your CSV
-        st.text_area("", value=row['conv'], height=600, disabled=True, key=f"text_display_{selection}")
+        st.text_area("", value=row['conversation'], height=600, disabled=True, key=f"text_display_{selection}")
     
     with col2:
         st.subheader("Performance Ratings")
