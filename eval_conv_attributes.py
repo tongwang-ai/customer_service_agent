@@ -88,12 +88,23 @@ def main():
     with st.expander("📝 View Instructions & Evaluation Criteria", expanded=True):
         st.markdown("""
         ### Welcome to the Agent Performance Survey
-        In this study, you will evaluate **4 unique conversations**. 
-        
-        **Guidelines:**
-        1. **Read Carefully:** The transcript box on the left is scrollable.
-        2. **Standard of Excellence:** The default rating is **5 (Excellent)**.
-        3. **Quality Control:** A minimum of **3 minutes** is required before submission.
+        You are a customer who has just finished an interaction with a service agent. You are not a professional evaluator; you are a person with a specific problem who wants to feel heard and helped. 
+
+        ### YOUR EVALUATION MINDSET
+        When reading the transcript, imagine yourself as the customer. Do not look for "technical checkboxes." Instead, ask yourself: 
+        - "Did I get what I needed?" (Reliability)
+        - "Did I feel like I was in good hands?" (Assurance)
+        - "Did I feel like a human being or just a number?" (Empathy)
+        - "Did I feel like the agent actually wanted to help me?" (Responsiveness)
+    
+        ### RATER DIMENSIONS (Customer Interpretation)
+        Rate the following from 1 to 5 (**1 = Very Dissatisfied, 5 = Very Satisfied**):
+    
+        1. **Reliability** (Ability to perform the promised service dependably and accurately): Did the agent actually solve my problem correctly and do what they said they would do? (Key Indicators: Correct solution, factual accuracy, following through on promises.)
+        2. **Assurance** (Knowledge and courtesy of employees and their ability to convey trust): Did the agent sound like they knew what they were doing? Did I trust the information they gave me? (Key Indicators: Expertise, professional language, customer confidence.)
+        3. **Empathy** (Provision of caring, individualized attention to customers): Did the agent seem to care about my situation? Did they listen to my specific concerns? (Key Indicators: Using name, acknowledging feelings, personalization.)
+        4. **Responsiveness** (Willingness to help customers and provide prompt service): How was the agent's "energy"? Did they respond quickly and show an eagerness to resolve my issue? (Key Indicators: Eagerness to assist, proactivity, ownership.)
+
         """)
 
     st.markdown("---")
