@@ -83,7 +83,7 @@ def main():
         </style>
     """, unsafe_allow_html=True)
     
-    st.title("Service Quality Assessment: The RATER Framework")
+    st.title("Service Quality Assessment")
     
     with st.expander("📝 View Instructions & Evaluation Criteria", expanded=True):
         st.markdown("""
