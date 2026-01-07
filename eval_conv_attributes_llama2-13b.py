@@ -64,7 +64,26 @@ def save_to_db(user_responses, start_time, elapsed_seconds):
 def main():
     st.set_page_config(page_title="RATER Evaluation Tool", layout="wide")
     
-    st.title("Service Quality Assessment: The RATER Framework")
+    # --- CUSTOM CSS FOR HIGH CONTRAST ---
+    st.markdown("""
+        <style>
+        .transcript-box {
+            background-color: #FFFFFF !important;
+            color: #111111 !important;
+            padding: 20px;
+            border-radius: 10px;
+            border: 1px solid #d1d1d1;
+            height: 600px;
+            overflow-y: scroll;
+            font-family: 'Source Sans Pro', sans-serif;
+            font-size: 16px;
+            line-height: 1.6;
+            white-space: pre-wrap;
+        }
+        </style>
+    """, unsafe_allow_html=True)
+    
+    st.title("Service Quality Assessment")
     
     # --- New Instructions Section ---
     with st.expander("📝 View Instructions & Evaluation Criteria", expanded=True):
