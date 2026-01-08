@@ -31,26 +31,26 @@ def save_to_db(user_responses, start_time, elapsed_seconds):
                     seconds_spent INTEGER
                 );
             """)
-            
+
             insert_query = """
-                INSERT INTO rater_evaluations_gpt_3_5_turbo_0125_gpt_4_0613 
+                INSERT INTO rater_evaluations_gpt_3_5_turbo_0125_gpt_4_0613
                 (conversation_index, reliability, assurance, empathy, responsiveness, start_time, submission_time, seconds_spent)
                 VALUES (%s, %s, %s, %s, %s, %s, %s, %s)
             """
-            
+
             submission_time = datetime.now()
             for resp in user_responses:
                 cur.execute(insert_query, (
-                    int(resp["conversation_index"]), 
+                    int(resp["conversation_index"]),
                     resp["reliability"],
                     resp["assurance"],
                     resp["empathy"],
                     resp["responsiveness"],
-                    start_time, 
+                    start_time,
                     submission_time,
                     int(elapsed_seconds)
                 ))
-            
+
             conn.commit()
             conn.close()
             return True
@@ -63,7 +63,7 @@ def save_to_db(user_responses, start_time, elapsed_seconds):
 ########################################
 def main():
     st.set_page_config(page_title="RATER Evaluation Tool", layout="wide")
-    
+
     # --- CUSTOM CSS FOR HIGH CONTRAST ---
     st.markdown("""
         <style>
@@ -82,29 +82,28 @@ def main():
         }
         </style>
     """, unsafe_allow_html=True)
-    
+
     st.title("Service Quality Assessment")
-    
+
     with st.expander("📝 View Instructions & Evaluation Criteria", expanded=True):
         st.markdown("""
         ### Welcome to the Agent Performance Survey
-        You are a customer who has just finished an interaction with a service agent. You are not a professional evaluator; you are a person with a specific problem who wants to feel heard and helped. 
+        You are a customer who has just finished an interaction with a service agent. You are not a professional evaluator; you are a person with a specific problem who wants to feel heard and helped.
 
         ### YOUR EVALUATION MINDSET
-        When reading the transcript, imagine yourself as the customer. Do not look for "technical checkboxes." Instead, ask yourself: 
+        When reading the transcript, imagine yourself as the customer. Do not look for "technical checkboxes." Instead, ask yourself:
         - "Did I get what I needed?" (Reliability)
         - "Did I feel like I was in good hands?" (Assurance)
         - "Did I feel like a human being or just a number?" (Empathy)
         - "Did I feel like the agent actually wanted to help me?" (Responsiveness)
-    
+
         ### RATER DIMENSIONS (Customer Interpretation)
         Rate the following from 1 to 5 (**1 = Very Dissatisfied, 5 = Very Satisfied**):
-    
+
         1. **Reliability** (Ability to perform the promised service dependably and accurately): Did the agent actually solve my problem correctly and do what they said they would do? (Key Indicators: Correct solution, factual accuracy, following through on promises.)
         2. **Assurance** (Knowledge and courtesy of employees and their ability to convey trust): Did the agent sound like they knew what they were doing? Did I trust the information they gave me? (Key Indicators: Expertise, professional language, customer confidence.)
         3. **Empathy** (Provision of caring, individualized attention to customers): Did the agent seem to care about my situation? Did they listen to my specific concerns? (Key Indicators: Using name, acknowledging feelings, personalization.)
         4. **Responsiveness** (Willingness to help customers and provide prompt service): How was the agent's "energy"? Did they respond quickly and show an eagerness to resolve my issue? (Key Indicators: Eagerness to assist, proactivity, ownership.)
-
         """)
 
     st.markdown("---")
@@ -112,7 +111,7 @@ def main():
     if "start_time" not in st.session_state:
         st.session_state["start_time"] = datetime.now()
         st.session_state["start_unix"] = time.time()
-    
+
     if "viewed_indices" not in st.session_state:
         st.session_state["viewed_indices"] = set()
 
@@ -131,72 +130,110 @@ def main():
 
     # Sidebar
     st.sidebar.header("Navigation")
-    selection = st.sidebar.radio("Select Conversation:", options=[0, 1, 2, 3], format_func=lambda x: f"Conversation {x+1}")
+    selection = st.sidebar.radio(
+        "Select Conversation:",
+        options=[0, 1, 2, 3],
+        format_func=lambda x: f"Conversation {x+1}"
+    )
     st.session_state["viewed_indices"].add(selection)
-    
+
     progress = len(st.session_state["viewed_indices"])
     st.sidebar.progress(progress / 4)
     st.sidebar.write(f"Progress: {progress} / 4 Reviewed")
-    
+
     # Display Content
     row = df_sampled.iloc[selection]
-    orig_idx = row['index']
-    
+    orig_idx = row["index"]
+
     col1, col2 = st.columns([1, 1])
-    
+
     with col1:
         st.subheader("Agent - Customer Conversation")
-        # --- IMPROVED READABILITY BOX ---
-        # Using a Div instead of a text_area to avoid the "disabled gray" look
         transcript_html = f'<div class="transcript-box">{row["conversation"]}</div>'
         st.markdown(transcript_html, unsafe_allow_html=True)
-    
+
     with col2:
         st.subheader("Performance Ratings")
-        
+
         st.markdown("**Reliability**: Ability to perform the promised service dependably and accurately.")
         st.caption("*Key Indicators: Correct solution, factual accuracy, following through on promises.*")
-        rel = st.select_slider("Rate Reliability", options=[1, 2, 3, 4, 5], key=f"rel_{selection}",     value=None,     format_func=lambda x: "— Select —" if x is None else str(x))
-        
+        rel = st.radio(
+            "Rate Reliability",
+            options=[1, 2, 3, 4, 5],
+            index=None,  # <- default is None (unselected)
+            key=f"rel_{selection}",
+            horizontal=True
+        )
+
         st.write("---")
         st.markdown("**Assurance**: Knowledge and courtesy of employees and their ability to convey trust.")
         st.caption("*Key Indicators: Expertise, professional language, customer confidence.*")
-        assur = st.select_slider("Rate Assurance", options=[1, 2, 3, 4, 5], key=f"assur_{selection}",     value=None,     format_func=lambda x: "— Select —" if x is None else str(x))
+        assur = st.radio(
+            "Rate Assurance",
+            options=[1, 2, 3, 4, 5],
+            index=None,
+            key=f"assur_{selection}",
+            horizontal=True
+        )
 
         st.write("---")
         st.markdown("**Empathy**: Provision of caring, individualized attention to customers.")
         st.caption("*Key Indicators: Using name, acknowledging feelings, personalization.*")
-        emp = st.select_slider("Rate Empathy", options=[1, 2, 3, 4, 5], key=f"emp_{selection}",     value=None,     format_func=lambda x: "— Select —" if x is None else str(x))
+        emp = st.radio(
+            "Rate Empathy",
+            options=[1, 2, 3, 4, 5],
+            index=None,
+            key=f"emp_{selection}",
+            horizontal=True
+        )
 
         st.write("---")
         st.markdown("**Responsiveness**: Willingness to help customers and provide prompt service.")
         st.caption("*Key Indicators: Eagerness to assist, proactivity, ownership.*")
-        resp = st.select_slider("Rate Responsiveness", options=[1, 2, 3, 4, 5], key=f"resp_{selection}",     value=None,     format_func=lambda x: "— Select —" if x is None else str(x))
+        resp = st.radio(
+            "Rate Responsiveness",
+            options=[1, 2, 3, 4, 5],
+            index=None,
+            key=f"resp_{selection}",
+            horizontal=True
+        )
 
     # Submission Logic
     if progress >= 4:
         current_time = time.time()
         elapsed_seconds = current_time - st.session_state["start_unix"]
-        
+
         if st.button("Submit All Evaluations", type="primary", use_container_width=True):
             if elapsed_seconds < 180:
                 st.error(f"⚠️ **Too Fast!** Please take another {int(180 - elapsed_seconds)} seconds to review carefully.")
             else:
-                # Gather data
+                # Optional: require all ratings before allowing submission
+                for i in range(4):
+                    for dim in ["rel", "assur", "emp", "resp"]:
+                        if st.session_state.get(f"{dim}_{i}") is None:
+                            st.error("Please rate all 4 dimensions for all 4 conversations before submitting.")
+                            st.stop()
+
                 all_data = []
                 for i in range(4):
                     all_data.append({
-                        "conversation_index": df_sampled.iloc[i]['index'],
-                        "reliability": st.session_state.get(f"rel_{i}", 5),
-                        "assurance": st.session_state.get(f"assur_{i}", 5),
-                        "empathy": st.session_state.get(f"emp_{i}", 5),
-                        "responsiveness": st.session_state.get(f"resp_{i}", 5)
+                        "conversation_index": df_sampled.iloc[i]["index"],
+                        "reliability": st.session_state.get(f"rel_{i}", None),
+                        "assurance": st.session_state.get(f"assur_{i}", None),
+                        "empathy": st.session_state.get(f"emp_{i}", None),
+                        "responsiveness": st.session_state.get(f"resp_{i}", None),
                     })
+
                 if save_to_db(all_data, st.session_state["start_time"], elapsed_seconds):
                     st.success("Evaluations successfully submitted!")
                     st.balloons()
     else:
-        st.button(f"Submit Disabled (Review {4-progress} more)", type="secondary", use_container_width=True, disabled=True)
+        st.button(
+            f"Submit Disabled (Review {4-progress} more)",
+            type="secondary",
+            use_container_width=True,
+            disabled=True
+        )
 
 if __name__ == "__main__":
     main()
