@@ -118,7 +118,7 @@ def main():
     # Load Local CSV
     if "df_local" not in st.session_state:
         try:
-            st.session_state["df_local"] = pd.read_csv("llama-2-70b-chat-conversations.csv")
+            st.session_state["df_local"] = pd.read_csv("llama-2-70b-chat-conversations.csv",    encoding="latin1", on_bad_lines="skip")
         except FileNotFoundError:
             st.error("CSV file not found.")
             return
