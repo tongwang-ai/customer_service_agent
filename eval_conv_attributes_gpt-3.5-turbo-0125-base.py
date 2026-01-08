@@ -33,7 +33,7 @@ def save_to_db(user_responses, start_time, elapsed_seconds):
             """)
 
             insert_query = """
-                INSERT INTO rater_evaluations_gpt_3_5_turbo_0125_gpt
+                INSERT INTO rater_evaluations_gpt_3_5_turbo_0125
                 (conversation_index, reliability, assurance, empathy, responsiveness, start_time, submission_time, seconds_spent)
                 VALUES (%s, %s, %s, %s, %s, %s, %s, %s)
             """
