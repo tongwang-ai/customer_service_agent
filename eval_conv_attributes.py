@@ -156,22 +156,22 @@ def main():
         
         st.markdown("**Reliability**: Ability to perform the promised service dependably and accurately.")
         st.caption("*Key Indicators: Correct solution, factual accuracy, following through on promises.*")
-        rel = st.select_slider("Rate Reliability", options=[1, 2, 3, 4, 5], key=f"rel_{selection}", value=5)
+        rel = st.select_slider("Rate Reliability", options=[1, 2, 3, 4, 5], key=f"rel_{selection}",     value=None,     format_func=lambda x: "— Select —" if x is None else str(x))
         
         st.write("---")
         st.markdown("**Assurance**: Knowledge and courtesy of employees and their ability to convey trust.")
         st.caption("*Key Indicators: Expertise, professional language, customer confidence.*")
-        assur = st.select_slider("Rate Assurance", options=[1, 2, 3, 4, 5], key=f"assur_{selection}", value=5)
+        assur = st.select_slider("Rate Assurance", options=[1, 2, 3, 4, 5], key=f"assur_{selection}",     value=None,     format_func=lambda x: "— Select —" if x is None else str(x))
 
         st.write("---")
         st.markdown("**Empathy**: Provision of caring, individualized attention to customers.")
         st.caption("*Key Indicators: Using name, acknowledging feelings, personalization.*")
-        emp = st.select_slider("Rate Empathy", options=[1, 2, 3, 4, 5], key=f"emp_{selection}", value=5)
+        emp = st.select_slider("Rate Empathy", options=[1, 2, 3, 4, 5], key=f"emp_{selection}",     value=None,     format_func=lambda x: "— Select —" if x is None else str(x))
 
         st.write("---")
         st.markdown("**Responsiveness**: Willingness to help customers and provide prompt service.")
         st.caption("*Key Indicators: Eagerness to assist, proactivity, ownership.*")
-        resp = st.select_slider("Rate Responsiveness", options=[1, 2, 3, 4, 5], key=f"resp_{selection}", value=5)
+        resp = st.select_slider("Rate Responsiveness", options=[1, 2, 3, 4, 5], key=f"resp_{selection}",     value=None,     format_func=lambda x: "— Select —" if x is None else str(x))
 
     # Submission Logic
     if progress >= 4:
