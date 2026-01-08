@@ -130,11 +130,7 @@ def main():
 
     # Sidebar
     st.sidebar.header("Navigation")
-    selection = st.sidebar.radio(
-        "Select Conversation:",
-        options=[0, 1, 2, 3],
-        format_func=lambda x: f"Conversation {x+1}"
-    )
+    selection = st.sidebar.radio("Select Conversation:", options=[0, 1, 2, 3], format_func=lambda x: f"Conversation {x+1}")
     st.session_state["viewed_indices"].add(selection)
 
     progress = len(st.session_state["viewed_indices"])
@@ -160,7 +156,7 @@ def main():
         rel = st.radio(
             "Rate Reliability",
             options=[1, 2, 3, 4, 5],
-            index=None,  # <- default is None (unselected)
+            index=None,  # default is None (unselected)
             key=f"rel_{selection}",
             horizontal=True
         )
@@ -207,33 +203,33 @@ def main():
             if elapsed_seconds < 180:
                 st.error(f"⚠️ **Too Fast!** Please take another {int(180 - elapsed_seconds)} seconds to review carefully.")
             else:
-                # Optional: require all ratings before allowing submission
+                # NEW: block submission if any rating is missing (None)
+                missing = []
                 for i in range(4):
                     for dim in ["rel", "assur", "emp", "resp"]:
                         if st.session_state.get(f"{dim}_{i}") is None:
-                            st.error("Please rate all 4 dimensions for all 4 conversations before submitting.")
-                            st.stop()
+                            missing.append((i + 1, dim))
 
+                if missing:
+                    st.error("⚠️ **Incomplete ratings**: Please rate all four dimensions for every conversation before submitting.")
+                    st.stop()
+
+                # Gather data (NO fallbacks!)
                 all_data = []
                 for i in range(4):
                     all_data.append({
                         "conversation_index": df_sampled.iloc[i]["index"],
-                        "reliability": st.session_state.get(f"rel_{i}", None),
-                        "assurance": st.session_state.get(f"assur_{i}", None),
-                        "empathy": st.session_state.get(f"emp_{i}", None),
-                        "responsiveness": st.session_state.get(f"resp_{i}", None),
+                        "reliability": st.session_state.get(f"rel_{i}"),
+                        "assurance": st.session_state.get(f"assur_{i}"),
+                        "empathy": st.session_state.get(f"emp_{i}"),
+                        "responsiveness": st.session_state.get(f"resp_{i}")
                     })
 
                 if save_to_db(all_data, st.session_state["start_time"], elapsed_seconds):
                     st.success("Evaluations successfully submitted!")
                     st.balloons()
     else:
-        st.button(
-            f"Submit Disabled (Review {4-progress} more)",
-            type="secondary",
-            use_container_width=True,
-            disabled=True
-        )
+        st.button(f"Submit Disabled (Review {4-progress} more)", type="secondary", use_container_width=True, disabled=True)
 
 if __name__ == "__main__":
     main()
