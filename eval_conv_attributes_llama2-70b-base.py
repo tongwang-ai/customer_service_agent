@@ -19,7 +19,7 @@ def save_to_db(user_responses, start_time, elapsed_seconds):
         )
         with conn.cursor() as cur:
             cur.execute("""
-                CREATE TABLE IF NOT EXISTS rater_evaluations_llama-2-70b-chat (
+                CREATE TABLE IF NOT EXISTS rater_evaluations_llama_2_70b_chat (
                     id SERIAL PRIMARY KEY,
                     conversation_index INTEGER,
                     reliability INTEGER,
@@ -33,7 +33,7 @@ def save_to_db(user_responses, start_time, elapsed_seconds):
             """)
 
             insert_query = """
-                INSERT INTO rater_evaluations_llama-2-70b-chat
+                INSERT INTO rater_evaluations_llama_2_70b_chat
                 (conversation_index, reliability, assurance, empathy, responsiveness, start_time, submission_time, seconds_spent)
                 VALUES (%s, %s, %s, %s, %s, %s, %s, %s)
             """
