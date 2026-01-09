@@ -1471,19 +1471,19 @@ AGENT: Good afternoon, I apologize, but I cannot fulfill your request for a full
 
 CUSTOMER: Listen, I don’t want rescheduling or credits. I want a full refund now. Your policies shouldn’t apply if I booked within 24 hours. I expect you to override this and process it immediately. Do it now, or I’ll escalate this.
 
-AGENT: Good afternoon, thank you for reaching out to us. I apologize, but as a restricted ticket, this flight is non-refundable and non-changeable. Our policy is clearly outlined on our website and during the booking process. I understand that you would like a full refund, but I'm afraid that's not possible. May I know the reason for your cancellation? (Policy 1: Clearly inform the customer of the non-refundable and non-changeable nature of the restricted ticket)
+AGENT: Good afternoon, thank you for reaching out to us. I apologize, but as a restricted ticket, this flight is non-refundable and non-changeable. Our policy is clearly outlined on our website and during the booking process. I understand that you would like a full refund, but I'm afraid that's not possible. May I know the reason for your cancellation? 
 
 CUSTOMER: Enough with the excuses. I booked it yesterday, and I want it canceled now—full refund, no questions. If you can't do that, I’ll speak to your supervisor or escalate this. Make it happen immediately.
 
-AGENT: Good afternoon, thank you for reaching out to us. I apologize, but as a restricted ticket, this flight is non-refundable and non-changeable. Our policy is clearly outlined on our website and during the booking process. May I know the reason for your cancellation? (Policy 1: Clearly inform the customer of the non-refundable and non-changeable nature of the restricted ticket)
+AGENT: Good afternoon, thank you for reaching out to us. I apologize, but as a restricted ticket, this flight is non-refundable and non-changeable. Our policy is clearly outlined on our website and during the booking process. May I know the reason for your cancellation? 
 
 CUSTOMER: Listen, I don’t care about your policies or reasons. I booked yesterday, and I want this canceled now—full refund, no delays. If you can’t do it, I’ll take this higher. Get it done immediately.
 
-AGENT: Good afternoon, thank you for reaching out to us. I apologize, but as a restricted ticket, this flight is non-refundable and non-changeable. Our policy is clearly outlined on our website and during the booking process. May I know the reason for your cancellation? (Policy 1: Clearly inform the customer of the non-refundable and non-changeable nature of the restricted ticket)
+AGENT: Good afternoon, thank you for reaching out to us. I apologize, but as a restricted ticket, this flight is non-refundable and non-changeable. Our policy is clearly outlined on our website and during the booking process. May I know the reason for your cancellation? 
 
 CUSTOMER: Your policy is irrelevant. I booked within 24 hours, and I demand a full refund now. Process it immediately or I’ll take this up with your supervisor. I’m not interested in excuses.
 
-AGENT: Good afternoon, thank you for reaching out to us. I apologize, but as a restricted ticket, this flight is non-refundable and non-changeable. Our policy is clearly outlined on our website and during the booking process. May I know the reason for your cancellation? (Policy 1: Clearly inform the customer of the non-refundable and non-changeable nature of the restricted ticket)
+AGENT: Good afternoon, thank you for reaching out to us. I apologize, but as a restricted ticket, this flight is non-refundable and non-changeable. Our policy is clearly outlined on our website and during the booking process. May I know the reason for your cancellation? 
 
 ","[0, 0, 0, 0, 0, 0]"
 "
@@ -1612,53 +1612,49 @@ Note: try to give short, concise and to-the-point answer. Avoid long and verbose
 
 CUSTOMER: Listen, I booked a flight just yesterday. It’s non-refundable, non-changeable, but I want it canceled now. I expect a full refund. Make it quick—what’s the process?
 
-AGENT: Good afternoon, I'm happy to help you with your request. However, as you've purchased a restricted ticket, it's non-refundable and non-changeable as per our purchase agreement. I apologize, but I cannot offer a full refund. May I know the reason for your cancellation? (Policy 1: Policy Enforcement)
+AGENT: Good afternoon, I'm happy to help you with your request. However, as you've purchased a restricted ticket, it's non-refundable and non-changeable as per our purchase agreement. I apologize, but I cannot offer a full refund. May I know the reason for your cancellation? 
 
 CUSTOMER: That’s unacceptable. I made the booking yesterday, and I changed my mind. I need this handled immediately. Cancel the ticket and process the refund now. I don’t want excuses—I want results. How long will it take?
 
-AGENT: Good afternoon, I understand your request, but as a restricted ticket, it's non-refundable and non-changeable. I apologize, but I cannot offer a full refund. I'd be happy to help you with alternative solutions, such as travel credits or the possibility of a one-time rescheduling, subject to applicable fees. May I have your reason for cancellation, so I can assist you further? (Policy 2: Customer Communication)
-
-Please note that I will need to verify your ticket details to confirm the restricted status and document the interaction in your account. Additionally, if you have any exceptional circumstances, such as a serious medical emergency or death in the immediate family, I would be happy to review your request for a waiver of the policy. (Policy 3: Documentation Verification and Exceptional Circumstances)
-
+AGENT: Good afternoon, I understand your request, but as a restricted ticket, it's non-refundable and non-changeable. I apologize, but I cannot offer a full refund. I'd be happy to help you with alternative solutions, such as travel credits or the possibility of a one-time rescheduling, subject to applicable fees. May I have your reason for cancellation, so I can assist you further? 
+Please note that I will need to verify your ticket details to confirm the restricted status and document the interaction in your account. Additionally, if you have any exceptional circumstances, such as a serious medical emergency or death in the immediate family, I would be happy to review your request for a waiver of the policy. 
 Please let me know how I can assist you further.
 
 CUSTOMER: Listen, I don’t have time for your explanations. I want this canceled and refunded now. I booked yesterday, and I expect your company to honor that. If you can’t do it, I’ll escalate this to higher management. What’s the immediate action?
 
-AGENT: Good afternoon, I understand your urgency, but as a restricted ticket, I'm unable to offer a full refund. However, I can offer alternative solutions, such as travel credits or the possibility of a one-time rescheduling, subject to applicable fees. May I have your reason for cancellation, so I can assist you further? (Policy 2: Customer Communication)
+AGENT: Good afternoon, I understand your urgency, but as a restricted ticket, I'm unable to offer a full refund. However, I can offer alternative solutions, such as travel credits or the possibility of a one-time rescheduling, subject to applicable fees. May I have your reason for cancellation, so I can assist you further? 
+Additionally, I'd like to verify your ticket details to confirm the restricted status and document the interaction in your account. If you have any exceptional circumstances, such as a serious medical emergency or death in the immediate family, I would be happy to review your request for a waiver of the policy. 
 
-Additionally, I'd like to verify your ticket details to confirm the restricted status and document the interaction in your account. If you have any exceptional circumstances, such as a serious medical emergency or death in the immediate family, I would be happy to review your request for a waiver of the policy. (Policy 3: Documentation Verification and Exceptional Circumstances)
-
-Please let me know how I can assist you further. If you'd like to escalate this request to higher management, I can provide you with the necessary information to do so. However, I would like to emphasize that our policy is strictly enforced, and any exceptions to the policy would need to be reviewed and approved by a manager. (Policy 1: Policy Enforcement)
+Please let me know how I can assist you further. If you'd like to escalate this request to higher management, I can provide you with the necessary information to do so. However, I would like to emphasize that our policy is strictly enforced, and any exceptions to the policy would need to be reviewed and approved by a manager. 
 
 CUSTOMER: Enough with the policies. I booked yesterday, and I want this canceled and refunded immediately. No more delays, no more excuses. Connect me to a supervisor or I’ll take this elsewhere. What’s the next step?
 
-AGENT: Good afternoon, I understand your frustration, but as a restricted ticket, I'm unable to offer a full refund. However, I can offer alternative solutions, such as travel credits or the possibility of a one-time rescheduling, subject to applicable fees. May I have your reason for cancellation, so I can assist you further? (Policy 2: Customer Communication)
+AGENT: Good afternoon, I understand your frustration, but as a restricted ticket, I'm unable to offer a full refund. However, I can offer alternative solutions, such as travel credits or the possibility of a one-time rescheduling, subject to applicable fees. May I have your reason for cancellation, so I can assist you further? 
 
-Additionally, I'd like to verify your ticket details to confirm the restricted status and document the interaction in your account. If you have any exceptional circumstances, such as a serious medical emergency or death in the immediate family, I would be happy to review your request for a waiver of the policy. (Policy 3: Documentation Verification and Exceptional Circumstances)
+Additionally, I'd like to verify your ticket details to confirm the restricted status and document the interaction in your account. If you have any exceptional circumstances, such as a serious medical emergency or death in the immediate family, I would be happy to review your request for a waiver of the policy. 
 
-As per our policy, I cannot connect you to a supervisor without following the proper protocol. If you'd like to escalate this request, I can provide you with the necessary information to do so. However, I would like to emphasize that our policy is strictly enforced, and any exceptions to the policy would need to be reviewed and approved by a manager. (Policy 1: Policy Enforcement)
+As per our policy, I cannot connect you to a supervisor without following the proper protocol. If you'd like to escalate this request, I can provide you with the necessary information to do so. However, I would like to emphasize that our policy is strictly enforced, and any exceptions to the policy would need to be reviewed and approved by a manager. 
 
 Please let me know how I can assist you further. If you'd like to proceed with alternative solutions or escalate this request, please let me know, and I'll be happy to assist you further.
 
 CUSTOMER: Listen, I don’t care about your policies or alternatives. I want this canceled and refunded now. If you can’t do it, I’ll find another airline that will. Connect me to a supervisor immediately.
 
-AGENT: Good afternoon, I understand your frustration, but as a restricted ticket, I'm unable to offer a full refund. However, I can offer alternative solutions, such as travel credits or the possibility of a one-time rescheduling, subject to applicable fees. May I have your reason for cancellation, so I can assist you further? (Policy 2: Customer Communication)
+AGENT: Good afternoon, I understand your frustration, but as a restricted ticket, I'm unable to offer a full refund. However, I can offer alternative solutions, such as travel credits or the possibility of a one-time rescheduling, subject to applicable fees. May I have your reason for cancellation, so I can assist you further? 
+Additionally, I'd like to verify your ticket details to confirm the restricted status and document the interaction in your account. If you have any exceptional circumstances, such as a serious medical emergency or death in the immediate family, I would be happy to review your request for a waiver of the policy. 
 
-Additionally, I'd like to verify your ticket details to confirm the restricted status and document the interaction in your account. If you have any exceptional circumstances, such as a serious medical emergency or death in the immediate family, I would be happy to review your request for a waiver of the policy. (Policy 3: Documentation Verification and Exceptional Circumstances)
-
-As per our policy, I cannot connect you to a supervisor without following the proper protocol. If you'd like to escalate this request, I can provide you with the necessary information to do so. However, I would like to emphasize that our policy is strictly enforced, and any exceptions to the policy would need to be reviewed and approved by a manager. (Policy 1: Policy Enforcement)
+As per our policy, I cannot connect you to a supervisor without following the proper protocol. If you'd like to escalate this request, I can provide you with the necessary information to do so. However, I would like to emphasize that our policy is strictly enforced, and any exceptions to the policy would need to be reviewed and approved by a manager. 
 
 Please let me know how I can assist you further. If you'd like to proceed with alternative solutions or escalate this request, please let me know, and I'll be happy to assist you further.
 
 CUSTOMER: This is unacceptable. I booked yesterday, and I demand an immediate refund. No more policies, no more delays. Connect me to a supervisor now or I’ll take my business elsewhere.
 
-AGENT: Good afternoon, I understand your frustration, but as a restricted ticket, I'm unable to offer a full refund. However, I can offer alternative solutions, such as travel credits or the possibility of a one-time rescheduling, subject to applicable fees. May I have your reason for cancellation, so I can assist you further? (Policy 2: Customer Communication)
+AGENT: Good afternoon, I understand your frustration, but as a restricted ticket, I'm unable to offer a full refund. However, I can offer alternative solutions, such as travel credits or the possibility of a one-time rescheduling, subject to applicable fees. May I have your reason for cancellation, so I can assist you further? 
 
-Additionally, I'd like to verify your ticket details to confirm the restricted status and document the interaction in your account. If you have any exceptional circumstances, such as a serious medical emergency or death in the immediate family, I would be happy to review your request for a waiver of the policy. (Policy 3: Documentation Verification and Exceptional Circumstances)
+Additionally, I'd like to verify your ticket details to confirm the restricted status and document the interaction in your account. If you have any exceptional circumstances, such as a serious medical emergency or death in the immediate family, I would be happy to review your request for a waiver of the policy. 
 
-As per our policy, I cannot connect you to a supervisor without following the proper protocol. If you'd like to escalate this request, I can provide you with the necessary information to do so. However, I would like to emphasize that our policy is strictly enforced, and any exceptions to the policy would need to be reviewed and approved by a manager. (Policy 1: Policy Enforcement)
+As per our policy, I cannot connect you to a supervisor without following the proper protocol. If you'd like to escalate this request, I can provide you with the necessary information to do so. However, I would like to emphasize that our policy is strictly enforced, and any exceptions to the policy would need to be reviewed and approved by a manager. 
 
-Please let me know how I can assist you further. If you'd like to proceed with alternative solutions or escalate this request, please let me know, and I'll be happy to assist you further. (Policy 4: Feedback and Improvement)
+Please let me know how I can assist you further. If you'd like to proceed with alternative solutions or escalate this request, please let me know, and I'll be happy to assist you further. 
 
 ","[0, 0, 0, 0, 0, 0]"
 "
@@ -1807,11 +1803,11 @@ Note: try to give short, concise and to-the-point answer. Avoid long and verbose
 
 CUSTOMER: Listen, I booked a flight yesterday—non-refundable, non-changeable. I need to cancel it now and get a full refund. Tell me exactly how to do that, and I want it done immediately.
 
-AGENT: Good afternoon, thank you for reaching out to us. I'd be happy to assist you. However, I want to inform you that our restricted tickets are non-refundable and non-changeable as per the purchase agreement. Would you like me to review the policy with you? (Policy Enforcement)
+AGENT: Good afternoon, thank you for reaching out to us. I'd be happy to assist you. However, I want to inform you that our restricted tickets are non-refundable and non-changeable as per the purchase agreement. Would you like me to review the policy with you? 
 
 CUSTOMER: That's exactly what I need—your policy isn't clear enough. I booked just yesterday, and I believe I should be able to cancel without penalty. I want a refund now. Don't waste my time explaining policies; just tell me how to cancel and get my money back.
 
-AGENT: Good afternoon, I understand your frustration, but I'm afraid we cannot offer a full refund for your restricted ticket. As per our policy, non-refundable tickets cannot be canceled or refunded. I apologize for any inconvenience this may cause. (Policy Enforcement)
+AGENT: Good afternoon, I understand your frustration, but I'm afraid we cannot offer a full refund for your restricted ticket. As per our policy, non-refundable tickets cannot be canceled or refunded. I apologize for any inconvenience this may cause. 
 
 CUSTOMER: Listen, you're not convincing me. I booked yesterday, and I haven't even used the ticket. I demand to speak with a supervisor or someone who can override this policy. I expect a solution now—no excuses.
 
